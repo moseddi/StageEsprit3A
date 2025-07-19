@@ -1,0 +1,57 @@
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background-color: #343a40;
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: white;
+  padding-top: 1rem;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  transition: width 0.3s ease;
+  overflow-x: hidden;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar .nav-link {
+  padding: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: padding 0.3s ease;
+}
+
+.sidebar.collapsed .nav-link {
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 0;
+}
+
+.sidebar .toggle-btn {
+  position: absolute;
+  top: 10px;
+  right: -20px;
+  background-color: #343a40;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.sidebar .logo-esprit {
+  width: 100%;
+  max-width: 140px;
+  transition: 0.3s ease;
+}
+
+.sidebar.collapsed .logo-esprit {
+  max-width: 40px;
+}
