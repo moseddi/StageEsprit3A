@@ -1,38 +1,332 @@
-.App {
-  text-align: center;
+/* app.css */
+
+/* Variables de thème basées sur Esprit (rouge, blanc, noir) */
+:root {
+  --primary-color: #c8102e; /* Rouge Esprit */
+  --primary-hover: #a00c25; /* Rouge foncé */
+  --bg-color: #f5f5f5; /* Fond clair */
+  --text-color: #1f2937; /* Texte sombre */
+  --glass-bg: rgba(255, 255, 255, 0.9); /* Effet verre dépoli */
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  --border-radius: 0.75rem;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+/* Conteneur de mise en page */
+.layout-container {
   min-height: 100vh;
+  background: var(--bg-color);
   display: flex;
   flex-direction: column;
+}
+
+/* En-tête avec menu */
+.header {
+  background: #1a1a1a;
+  padding: 0 2rem;
+  display: flex;
   align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+  height: 80px;
+  z-index: 1000;
+}
+
+.logo-container {
+  margin-right: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.logo-container:hover {
+  transform: scale(1.05);
+}
+
+.ant-menu-horizontal {
+  background: transparent !important;
+  border-bottom: none !important;
+  line-height: 80px;
+}
+
+.ant-menu-item {
+  color: #fff !important;
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+  font-size: 1.125rem;
+  padding: 0 1.5rem !important;
+  margin: 0 0.5rem !important;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  min-width: 120px;
+  text-align: center;
+  background: rgba(200, 16, 46, 0.1);
+  border: 1px solid var(--glass-border);
+}
+
+.ant-menu-item:hover,
+.ant-menu-item-selected {
+  background: var(--primary-color) !important;
+  color: white !important;
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Conteneur de contenu */
+.content-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  margin: 2rem;
+  animation: fadeIn 0.8s ease-out;
+  flex: 1;
+}
+
+/* Section d'accueil */
+.welcome-section {
+  text-align: center;
+  padding: 4rem 0;
+  animation: bounceIn 1s ease-out;
+}
+
+.welcome-section h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  font-family: 'Arial', sans-serif;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  gap: 1rem;
 }
 
-.App-link {
-  color: #61dafb;
+.welcome-section p {
+  font-size: 1.5rem;
+  font-family: 'Arial', sans-serif;
+  color: #4b5563;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-@keyframes App-logo-spin {
+/* Pied de page */
+.ant-layout-footer {
+  background: #1a1a1a;
+  color: #fff !important;
+  text-align: center;
+  padding: 1.5rem;
+  font-family: 'Arial', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+/* Style des formulaires d'authentification */
+.auth-card {
+  padding: 2.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(240, 240, 240, 0.95));
+}
+
+.auth-card .ant-tabs-nav {
+  margin-bottom: 1.5rem;
+}
+
+.auth-card .ant-tabs-tab {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4b5563;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  transition: all 0.3s ease;
+}
+
+.auth-card .ant-tabs-tab-active {
+  background: var(--primary-color);
+  color: white !important;
+}
+
+.ant-form-item-label > label {
+  font-family: 'Arial', sans-serif;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.ant-input, .ant-input-password, .ant-select-selector {
+  border-radius: 0.5rem !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid var(--glass-border) !important;
+  padding: 0.75rem 1rem !important;
+  font-family: 'Arial', sans-serif;
+  transition: all 0.3s ease;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.ant-input:hover, .ant-input-password:hover, .ant-select-selector:hover {
+  border-color: var(--primary-color) !important;
+}
+
+.ant-input:focus, .ant-input-password:focus, .ant-select-selector:focus {
+  border-color: var(--primary-hover) !important;
+  box-shadow: 0 0 8px rgba(200, 16, 46, 0.3) !important;
+}
+
+.ant-btn-primary {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.ant-btn-primary:hover {
+  background: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+}
+
+/* Style des cartes */
+.ant-card {
+  border-radius: var(--border-radius);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+
+/* Style des tables */
+.ant-table {
+  background: transparent !important;
+}
+
+.ant-table-thead > tr > th {
+  background: var(--glass-bg) !important;
+  font-family: 'Arial', sans-serif;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.ant-table-tbody > tr > td {
+  font-family: 'Arial', sans-serif;
+  color: #4b5563;
+}
+
+/* Style des modales */
+.ant-modal-content {
+  border-radius: var(--border-radius);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+
+/* Style des icônes d'action */
+.icon-action {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.icon-action:hover {
+  color: var(--primary-hover);
+  transform: scale(1.2);
+}
+
+/* Animations */
+@keyframes fadeIn {
   from {
-    transform: rotate(0deg);
+    opacity: 0;
+    transform: translateY(20px);
   }
   to {
-    transform: rotate(360deg);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(40px);
+  }
+  60% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Ajustements responsives */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 1rem;
+    height: 60px;
+  }
+
+  .logo-container {
+    margin-right: 1rem;
+  }
+
+  .ant-menu-item {
+    font-size: 1rem;
+    padding: 0 1rem !important;
+    min-width: 90px;
+  }
+
+  .content-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .welcome-section h1 {
+    font-size: 2.25rem;
+  }
+
+  .welcome-section p {
+    font-size: 1.25rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .welcome-section {
+    padding: 2rem 0;
+  }
+
+  .welcome-section h1 {
+    font-size: 1.875rem;
+  }
+
+  .welcome-section p {
+    font-size: 1rem;
+  }
+
+  .header .ant-menu {
+    display: none;
+  }
+
+  .logo-container {
+    margin: 0 auto;
+  }
+
+  .auth-card .ant-tabs-tab {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
   }
 }
