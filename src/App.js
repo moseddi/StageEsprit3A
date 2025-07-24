@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import UserManagement from './components/UserManagement';
+import Admin from './components/Admin';
 import Accueil from './components/Accueil';
 import { Layout, Menu, theme, Image } from 'antd';
 import { HomeOutlined, TeamOutlined, CopyrightOutlined, LogoutOutlined } from '@ant-design/icons';
@@ -75,7 +75,7 @@ const AppContent = () => {
                         <Route path="/" element={<Accueil />} />
                         <Route
                             path="/utilisateurs"
-                            element={<UserManagement setUserName={(nom) => setCurrentUser(prev => ({ ...prev, nom }))} onLogout={handleLogout} />}
+                            element={<Admin setUserName={(nom) => setCurrentUser(prev => ({ ...prev, nom }))} onLogout={handleLogout} />}
                         />
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

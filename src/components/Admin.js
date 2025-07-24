@@ -28,7 +28,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const UserManagement = ({ setUserName, onLogout }) => {
+const Admin = ({ setUserName, onLogout }) => {
     const [utilisateurs, setUtilisateurs] = useState([]);
     const [classes, setClasses] = useState([]);
     const [etudiants, setEtudiants] = useState([]);
@@ -1782,4 +1782,4 @@ const UserManagement = ({ setUserName, onLogout }) => {
     );
 };
 
-export default UserManagement;
+export default Admin;

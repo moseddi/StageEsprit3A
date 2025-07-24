@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Typography, Button } from 'antd';
-import { TeamOutlined } from '@ant-design/icons';
+import { FormOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import espritLogo from './esprit-logo.png'; // Adjust path as needed
 import './Accueil.css';
@@ -16,9 +16,9 @@ const Accueil = () => {
                 <Image
                     src={espritLogo}
                     alt="Esprit Logo"
-                    width={220}
+                    width={240}
                     preview={false}
-                    className="accueil-logo animate-pulse"
+                    className="accueil-logo animate-heartbeat"
                 />
                 <Title level={1} className="accueil-title">
                     Bienvenue à ESPRIT
@@ -32,8 +32,8 @@ const Accueil = () => {
                 <Button
                     type="primary"
                     size="large"
-                    icon={<TeamOutlined />}
-                    className="accueil-cta bg-red-500 hover:bg-red-600 border-none rounded-lg"
+                    icon={<FormOutlined className="accueil-cta-icon" />}
+                    className="accueil-cta animate-pulse"
                     onClick={() => navigate('/utilisateurs')}
                 >
                     Commencer la Gestion
