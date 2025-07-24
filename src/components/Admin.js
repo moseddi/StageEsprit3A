@@ -42,7 +42,7 @@ const UserManagement = ({ setUserName, onLogout }) => {
     const [formulaireModalVisible, setFormulaireModalVisible] = useState(false);
     const [questionModalVisible, setQuestionModalVisible] = useState(false);
     const [linkModalVisible, setLinkModalVisible] = useState(false);
-    const [submissionModalVisible, setSubmissionModalVisible] = useState(false); // New for evaluator form submission
+    const [submissionModalVisible, setSubmissionModalVisible] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [selectedClass, setSelectedClass] = useState(null);
     const [selectedEtudiant, setSelectedEtudiant] = useState(null);
@@ -170,12 +170,11 @@ const UserManagement = ({ setUserName, onLogout }) => {
         try {
             const data = await apiFetch(`${FORMULAIRES_API}?page=${page}&size=${size}`);
             if (data && Array.isArray(data.content)) {
-                log('Formulaires récupérés', data);
                 setFormulaires(data.content);
             } else {
-                log('Aucune donnée formulaire valide récupérée', data, 'warning');
                 setFormulaires([]);
             }
+
         } catch (error) {
             log('Échec de la récupération des formulaires', error.message, 'error');
             setFormulaires([]);
@@ -221,6 +220,7 @@ const UserManagement = ({ setUserName, onLogout }) => {
             setLoading(false);
         }
     }, 300), [currentUser]);
+
 
     const createFormulaire = async (formData) => {
         log('Création de formulaire', formData);
@@ -274,11 +274,10 @@ const UserManagement = ({ setUserName, onLogout }) => {
     const createQuestion = async (questionData) => {
         log('Création de question', questionData);
         try {
-            const data = await apiFetch(QUESTIONS_API, {
+            const data = await apiFetch(`${QUESTIONS_API}?id_formulaire=${selectedFormulaire.id}`, {
                 method: 'POST',
                 body: {
                     ...questionData,
-                    id_formulaire: selectedFormulaire.id,
                     statut: questionData.statut !== undefined ? questionData.statut : true,
                 },
             });
@@ -365,11 +364,14 @@ const UserManagement = ({ setUserName, onLogout }) => {
                 message.success('Formulaire créé');
             }
             setFormulaireModalVisible(false);
-            fetchFormulaires(formPage, 10);
+
+            // 👇 Forcer le rechargement depuis la première page
+            fetchFormulaires(0, 10);
         } catch (error) {
             message.error(error.message || 'Échec');
         }
     };
+
 
     const handleQuestionSubmit = async () => {
         try {
@@ -1219,23 +1221,23 @@ const UserManagement = ({ setUserName, onLogout }) => {
     }
 
     return (
-        <div className="content-container">
+        <div className="content-container" style={{ background: '#e6e6fa', padding: '20px' }}>
             <div className="flex justify-between mb-6">
-                <Title level={3} style={{ color: '#1f2937' }}>
-                    <TeamOutlined className="text-red-500 mr-2" />
+                <Title level={3} style={{ color: '#c8102e' }}>
+                    <TeamOutlined className="text-ff69b4 mr-2" />
                     Panneau de Gestion Administrateur
                 </Title>
                 <Space>
-                    <Text strong className="text-gray-600">{currentUser.nom} (Administrateur)</Text>
+                    <Text strong style={{ color: '#ff69b4' }}>{currentUser.nom} (Administrateur)</Text>
                     <UserOutlined
-                        className="text-red-500"
+                        className="text-ff69b4"
                         onClick={() => {
                             setProfileModalVisible(true);
                             profileForm.setFieldsValue(currentUser);
                         }}
                     />
                     <LogoutOutlined
-                        className="text-red-500"
+                        className="text-ff69b4"
                         onClick={onLogout}
                         style={{ fontSize: '1.5rem' }}
                     />
@@ -1247,17 +1249,18 @@ const UserManagement = ({ setUserName, onLogout }) => {
                 onChange={setActiveManagementTab}
                 className="mb-6"
             >
-                <TabPane tab={<span><UserOutlined className="text-red-500 mr-2" /> Utilisateurs</span>} key="utilisateurs" />
-                <TabPane tab={<span><BookOutlined className="text-red-500 mr-2" /> Classes</span>} key="classes" />
-                <TabPane tab={<span><TeamOutlined className="text-red-500 mr-2" /> Étudiants</span>} key="etudiants" />
-                <TabPane tab={<span><BookOutlined className="text-red-500 mr-2" /> Formulaires</span>} key="formulaires" />
+                <TabPane tab={<span><UserOutlined className="text-ff69b4 mr-2" /> Utilisateurs</span>} key="utilisateurs" />
+                <TabPane tab={<span><BookOutlined className="text-ff69b4 mr-2" /> Classes</span>} key="classes" />
+                <TabPane tab={<span><TeamOutlined className="text-ff69b4 mr-2" /> Étudiants</span>} key="etudiants" />
+                <TabPane tab={<span><BookOutlined className="text-ff69b4 mr-2" /> Formulaires</span>} key="formulaires" />
             </Tabs>
 
             {activeManagementTab === 'utilisateurs' && (
-                <Card className="ant-card">
+                <Card className="ant-card" style={{ borderRadius: '12px', borderColor: '#ff69b4' }}>
                     <div className="flex justify-between mb-4">
                         <PlusCircleOutlined
-                            className="text-red-500"
+                            className="text-ff69b4"
+                            style={{ fontSize: '24px' }}
                             onClick={() => {
                                 setSelectedUser(null);
                                 form.resetFields();
@@ -1288,7 +1291,7 @@ const UserManagement = ({ setUserName, onLogout }) => {
                                 render: (_, record) => (
                                     <Space>
                                         <EditOutlined
-                                            className="text-red-500"
+                                            className="text-ff69b4"
                                             onClick={() => {
                                                 setSelectedUser(record);
                                                 form.setFieldsValue(record);
@@ -1301,7 +1304,7 @@ const UserManagement = ({ setUserName, onLogout }) => {
                                             okText="Oui"
                                             cancelText="Non"
                                         >
-                                            <DeleteOutlined className="text-red-500" />
+                                            <DeleteOutlined className="text-ff69b4" />
                                         </Popconfirm>
                                     </Space>
                                 ),
@@ -1317,10 +1320,11 @@ const UserManagement = ({ setUserName, onLogout }) => {
             )}
 
             {activeManagementTab === 'classes' && (
-                <Card className="ant-card">
+                <Card className="ant-card" style={{ borderRadius: '12px', borderColor: '#ff69b4' }}>
                     <div className="flex justify-between mb-4">
                         <PlusCircleOutlined
-                            className="text-red-500"
+                            className="text-ff69b4"
+                            style={{ fontSize: '24px' }}
                             onClick={() => {
                                 setSelectedClass(null);
                                 classForm.resetFields();
@@ -1339,7 +1343,7 @@ const UserManagement = ({ setUserName, onLogout }) => {
                                 render: (_, record) => (
                                     <Space>
                                         <EditOutlined
-                                            className="text-red-500"
+                                            className="text-ff69b4"
                                             onClick={() => {
                                                 setSelectedClass(record);
                                                 classForm.setFieldsValue(record);
@@ -1352,7 +1356,7 @@ const UserManagement = ({ setUserName, onLogout }) => {
                                             okText="Oui"
                                             cancelText="Non"
                                         >
-                                            <DeleteOutlined className="text-red-500" />
+                                            <DeleteOutlined className="text-ff69b4" />
                                         </Popconfirm>
                                     </Space>
                                 ),
@@ -1368,10 +1372,11 @@ const UserManagement = ({ setUserName, onLogout }) => {
             )}
 
             {activeManagementTab === 'etudiants' && (
-                <Card className="ant-card">
+                <Card className="ant-card" style={{ borderRadius: '12px', borderColor: '#ff69b4' }}>
                     <div className="flex justify-between mb-4">
                         <PlusCircleOutlined
-                            className="text-red-500"
+                            className="text-ff69b4"
+                            style={{ fontSize: '24px' }}
                             onClick={() => {
                                 setSelectedEtudiant(null);
                                 etudiantForm.resetFields();
@@ -1400,7 +1405,7 @@ const UserManagement = ({ setUserName, onLogout }) => {
                                 render: (_, record) => (
                                     <Space>
                                         <EditOutlined
-                                            className="text-red-500"
+                                            className="text-ff69b4"
                                             onClick={() => {
                                                 setSelectedEtudiant(record);
                                                 etudiantForm.setFieldsValue({
@@ -1416,7 +1421,7 @@ const UserManagement = ({ setUserName, onLogout }) => {
                                             okText="Oui"
                                             cancelText="Non"
                                         >
-                                            <DeleteOutlined className="text-red-500" />
+                                            <DeleteOutlined className="text-ff69b4" />
                                         </Popconfirm>
                                     </Space>
                                 ),
@@ -1432,10 +1437,11 @@ const UserManagement = ({ setUserName, onLogout }) => {
             )}
 
             {activeManagementTab === 'formulaires' && (
-                <Card className="ant-card">
+                <Card className="ant-card" style={{ borderRadius: '12px', borderColor: '#ff69b4' }}>
                     <div className="flex justify-between mb-4">
                         <PlusCircleOutlined
-                            className="text-red-500"
+                            className="text-ff69b4"
+                            style={{ fontSize: '24px' }}
                             onClick={() => {
                                 setSelectedFormulaire(null);
                                 formulaireForm.resetFields();
@@ -1460,9 +1466,10 @@ const UserManagement = ({ setUserName, onLogout }) => {
                     />
                     {selectedFormulaire && (
                         <div className="mt-4">
-                            <Title level={4}>Questions du Formulaire</Title>
+                            <Title level={4} style={{ color: '#c8102e' }}>Questions du Formulaire</Title>
                             <PlusCircleOutlined
-                                className="text-red-500 mb-2"
+                                className="text-ff69b4 mb-2"
+                                style={{ fontSize: '24px' }}
                                 onClick={() => {
                                     setSelectedQuestion(null);
                                     questionForm.resetFields();
@@ -1483,51 +1490,35 @@ const UserManagement = ({ setUserName, onLogout }) => {
             )}
 
             <Modal
-                title={<span><UserSwitchOutlined className="text-red-500 mr-2" /> {selectedUser ? 'Modifier Utilisateur' : 'Créer Utilisateur'}</span>}
+                title={<span style={{ color: '#ff69b4' }}>{selectedUser ? 'Modifier Utilisateur' : 'Créer Nouvel Utilisateur'}</span>}
                 open={modalVisible}
                 onCancel={() => setModalVisible(false)}
                 footer={null}
                 destroyOnClose
-                width={600}
+                style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
             >
-                <Form form={form} layout="vertical" onFinish={handleUserSubmit}>
-                    <Row gutter={16}>
+                <Form form={form} layout="vertical" onFinish={handleUserSubmit} initialValues={selectedUser || {}}>
+                    <Row gutter={[16, 16]}>
                         <Col span={12}>
-                            <Form.Item
-                                name="nom"
-                                label="Nom complet"
-                                rules={[{ required: true }]}
-                            >
-                                <Input prefix={<UserOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                            <Form.Item name="nom" label={<Text style={{ color: '#c8102e' }}>Nom complet</Text>} rules={[{ required: true, message: 'Veuillez entrer votre nom!' }]}>
+                                <Input style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<UserOutlined style={{ color: '#ff69b4' }} />} placeholder="John Doe" size="large" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item
-                                name="email"
-                                label="Email"
-                                rules={[{ required: true, type: 'email' }]}
-                            >
-                                <Input prefix={<MailOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                            <Form.Item name="email" label={<Text style={{ color: '#c8102e' }}>Email</Text>} rules={[{ required: true, type: 'email', message: 'Veuillez entrer un email valide!' }]}>
+                                <Input style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<MailOutlined style={{ color: '#ff69b4' }} />} placeholder="exemple@esprit.tn" size="large" />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Row gutter={16}>
+                    <Row gutter={[16, 16]}>
                         <Col span={12}>
-                            <Form.Item
-                                name="motDePasse"
-                                label="Mot de passe"
-                                rules={[{ required: !selectedUser, message: 'Veuillez entrer le mot de passe!' }]}
-                            >
-                                <Input.Password prefix={<LockOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                            <Form.Item name="motDePasse" label={<Text style={{ color: '#c8102e' }}>Mot de passe</Text>} rules={[{ required: !selectedUser, message: 'Veuillez entrer le mot de passe!' }]}>
+                                <Input.Password style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<LockOutlined style={{ color: '#ff69b4' }} />} placeholder="••••••••" size="large" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item
-                                name="role"
-                                label="Rôle"
-                                rules={[{ required: true }]}
-                            >
-                                <Select size="large" className="rounded-lg">
+                            <Form.Item name="role" label={<Text style={{ color: '#c8102e' }}>Rôle</Text>} rules={[{ required: true, message: 'Veuillez sélectionner un rôle!' }]}>
+                                <Select style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} size="large" placeholder="Sélectionner un rôle">
                                     <Option value="ADMIN">Administrateur</Option>
                                     <Option value="EVALUATOR">Évaluateur</Option>
                                 </Select>
@@ -1536,10 +1527,10 @@ const UserManagement = ({ setUserName, onLogout }) => {
                     </Row>
                     <Form.Item>
                         <Button
+                            style={{ background: '#ff69b4', color: '#fff', borderRadius: '8px', transition: 'all 0.3s ease', '&:hover': { background: '#c8102e', color: '#fff' } }}
                             type="primary"
                             htmlType="submit"
                             size="large"
-                            className="w-full bg-red-500 hover:bg-red-600 border-none rounded-lg"
                             icon={<UserSwitchOutlined />}
                         >
                             {selectedUser ? 'Mettre à jour' : 'Créer'} Utilisateur
@@ -1549,26 +1540,23 @@ const UserManagement = ({ setUserName, onLogout }) => {
             </Modal>
 
             <Modal
-                title={<span><BookOutlined className="text-red-500 mr-2" /> {selectedClass ? 'Modifier Classe' : 'Créer Classe'}</span>}
+                title={<span style={{ color: '#ff69b4' }}>{selectedClass ? 'Modifier Classe' : 'Créer Nouvelle Classe'}</span>}
                 open={classModalVisible}
                 onCancel={() => setClassModalVisible(false)}
                 footer={null}
                 destroyOnClose
+                style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
             >
-                <Form form={classForm} layout="vertical" onFinish={handleClassSubmit}>
-                    <Form.Item
-                        name="nom"
-                        label="Nom de la Classe"
-                        rules={[{ required: true, message: 'Veuillez entrer le nom de la classe!' }]}
-                    >
-                        <Input prefix={<BookOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                <Form form={classForm} layout="vertical" onFinish={handleClassSubmit} initialValues={selectedClass || {}}>
+                    <Form.Item name="nom" label={<Text style={{ color: '#c8102e' }}>Nom de la Classe</Text>} rules={[{ required: true, message: 'Veuillez entrer le nom de la classe!' }]}>
+                        <Input style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<BookOutlined style={{ color: '#ff69b4' }} />} placeholder="Ex: L3 Info" size="large" />
                     </Form.Item>
                     <Form.Item>
                         <Button
+                            style={{ background: '#ff69b4', color: '#fff', borderRadius: '8px', transition: 'all 0.3s ease', '&:hover': { background: '#c8102e', color: '#fff' } }}
                             type="primary"
                             htmlType="submit"
                             size="large"
-                            className="w-full bg-red-500 hover:bg-red-600 border-none rounded-lg"
                             icon={<BookOutlined />}
                         >
                             {selectedClass ? 'Mettre à jour' : 'Créer'} Classe
@@ -1578,41 +1566,30 @@ const UserManagement = ({ setUserName, onLogout }) => {
             </Modal>
 
             <Modal
-                title={<span><TeamOutlined className="text-red-500 mr-2" /> {selectedEtudiant ? 'Modifier Étudiant' : 'Créer Étudiant'}</span>}
+                title={<span style={{ color: '#ff69b4' }}>{selectedEtudiant ? 'Modifier Étudiant' : 'Créer Nouvel Étudiant'}</span>}
                 open={etudiantModalVisible}
                 onCancel={() => setEtudiantModalVisible(false)}
                 footer={null}
                 destroyOnClose
-                width={600}
+                style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
             >
-                <Form form={etudiantForm} layout="vertical" onFinish={handleEtudiantSubmit}>
-                    <Row gutter={16}>
+                <Form form={etudiantForm} layout="vertical" onFinish={handleEtudiantSubmit} initialValues={selectedEtudiant ? { ...selectedEtudiant, classe: selectedEtudiant.classe?.id?.toString() } : {}}>
+                    <Row gutter={[16, 16]}>
                         <Col span={12}>
-                            <Form.Item
-                                name="nom"
-                                label="Nom"
-                                rules={[{ required: true, message: 'Veuillez entrer le nom!' }]}
-                            >
-                                <Input prefix={<UserOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                            <Form.Item name="nom" label={<Text style={{ color: '#c8102e' }}>Nom</Text>} rules={[{ required: true, message: 'Veuillez entrer le nom!' }]}>
+                                <Input style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<UserOutlined style={{ color: '#ff69b4' }} />} placeholder="John Doe" size="large" />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Row gutter={16}>
+                    <Row gutter={[16, 16]}>
                         <Col span={12}>
-                            <Form.Item
-                                name="email"
-                                label="Email"
-                                rules={[{ required: true, type: 'email', message: 'Veuillez entrer un email valide!' }]}
-                            >
-                                <Input prefix={<MailOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                            <Form.Item name="email" label={<Text style={{ color: '#c8102e' }}>Email</Text>} rules={[{ required: true, type: 'email', message: 'Veuillez entrer un email valide!' }]}>
+                                <Input style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<MailOutlined style={{ color: '#ff69b4' }} />} placeholder="exemple@esprit.tn" size="large" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item
-                                name="classe"
-                                label="Classe"
-                            >
-                                <Select size="large" placeholder="Sélectionner une classe" allowClear className="rounded-lg">
+                            <Form.Item name="classe" label={<Text style={{ color: '#c8102e' }}>Classe</Text>}>
+                                <Select style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} size="large" placeholder="Sélectionner une classe" allowClear>
                                     {classes.map(cls => (
                                         <Option key={cls.id} value={cls.id.toString()}>{cls.nom}</Option>
                                     ))}
@@ -1622,10 +1599,10 @@ const UserManagement = ({ setUserName, onLogout }) => {
                     </Row>
                     <Form.Item>
                         <Button
+                            style={{ background: '#ff69b4', color: '#fff', borderRadius: '8px', transition: 'all 0.3s ease', '&:hover': { background: '#c8102e', color: '#fff' } }}
                             type="primary"
                             htmlType="submit"
                             size="large"
-                            className="w-full bg-red-500 hover:bg-red-600 border-none rounded-lg"
                             icon={<TeamOutlined />}
                         >
                             {selectedEtudiant ? 'Mettre à jour' : 'Créer'} Étudiant
@@ -1635,36 +1612,33 @@ const UserManagement = ({ setUserName, onLogout }) => {
             </Modal>
 
             <Modal
-                title={<span><UserOutlined className="text-red-500 mr-2" /> Modifier le Profil</span>}
+                title={<span style={{ color: '#ff69b4' }}>Modifier le Profil</span>}
                 open={profileModalVisible}
                 onCancel={() => setProfileModalVisible(false)}
                 footer={null}
                 destroyOnClose
+                style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
             >
-                <Form form={profileForm} layout="vertical" onFinish={handleProfileUpdate}>
-                    <Form.Item name="nom" label="Nom" rules={[{ required: true }]}>
-                        <Input prefix={<UserOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                <Form form={profileForm} layout="vertical" onFinish={handleProfileUpdate} initialValues={currentUser || {}}>
+                    <Form.Item name="nom" label={<Text style={{ color: '#c8102e' }}>Nom</Text>} rules={[{ required: true, message: 'Veuillez entrer votre nom!' }]}>
+                        <Input style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<UserOutlined style={{ color: '#ff69b4' }} />} placeholder="John Doe" size="large" />
                     </Form.Item>
-                    <Form.Item
-                        name="email"
-                        label="Email"
-                        rules={[{ required: true, type: 'email' }]}
-                    >
-                        <Input prefix={<MailOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                    <Form.Item name="email" label={<Text style={{ color: '#c8102e' }}>Email</Text>} rules={[{ required: true, type: 'email', message: 'Veuillez entrer un email valide!' }]}>
+                        <Input style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<MailOutlined style={{ color: '#ff69b4' }} />} placeholder="exemple@esprit.tn" size="large" />
                     </Form.Item>
                     <Form.Item
                         name="motDePasse"
-                        label="Mot de passe (laisser vide pour conserver l'actuel)"
-                        extra="Doit comporter au moins 6 caractères"
+                        label={<Text style={{ color: '#c8102e' }}>Mot de passe (laisser vide pour conserver l'actuel)</Text>}
+                        extra={<Text style={{ color: '#c8102e' }}>Doit comporter au moins 6 caractères</Text>}
                     >
-                        <Input.Password prefix={<LockOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                        <Input.Password style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<LockOutlined style={{ color: '#ff69b4' }} />} placeholder="••••••••" size="large" />
                     </Form.Item>
                     <Form.Item>
                         <Button
+                            style={{ background: '#ff69b4', color: '#fff', borderRadius: '8px', transition: 'all 0.3s ease', '&:hover': { background: '#c8102e', color: '#fff' } }}
                             type="primary"
                             htmlType="submit"
                             size="large"
-                            className="w-full bg-red-500 hover:bg-red-600 border-none rounded-lg"
                             icon={<UserSwitchOutlined />}
                         >
                             Sauvegarder le Profil
@@ -1674,30 +1648,23 @@ const UserManagement = ({ setUserName, onLogout }) => {
             </Modal>
 
             <Modal
-                title={<span><BookOutlined className="text-red-500 mr-2" /> Créer un Formulaire d'Évaluation</span>}
+                title={<span style={{ color: '#ff69b4' }}>{selectedFormulaire ? 'Modifier Formulaire' : 'Créer Nouveau Formulaire'}</span>}
                 open={formulaireModalVisible}
                 onCancel={() => setFormulaireModalVisible(false)}
                 footer={null}
                 destroyOnClose
+                style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
             >
-                <Form form={formulaireForm} layout="vertical" onFinish={handleFormulaireSubmit}>
-                    <Row gutter={16}>
+                <Form form={formulaireForm} layout="vertical" onFinish={handleFormulaireSubmit} initialValues={selectedFormulaire || {}}>
+                    <Row gutter={[16, 16]}>
                         <Col span={12}>
-                            <Form.Item
-                                name="titre"
-                                label="Titre"
-                                rules={[{ required: true }]}
-                            >
-                                <Input prefix={<BookOutlined className="text-red-500" />} size="large" className="rounded-lg" />
+                            <Form.Item name="titre" label={<Text style={{ color: '#c8102e' }}>Titre</Text>} rules={[{ required: true, message: 'Veuillez entrer un titre!' }]}>
+                                <Input style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} prefix={<BookOutlined style={{ color: '#ff69b4' }} />} placeholder="Ex: Évaluation L3" size="large" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item
-                                name="niveau"
-                                label="Niveau Académique"
-                                rules={[{ required: true }]}
-                            >
-                                <Select size="large" className="rounded-lg">
+                            <Form.Item name="niveau" label={<Text style={{ color: '#c8102e' }}>Niveau Académique</Text>} rules={[{ required: true, message: 'Veuillez sélectionner un niveau!' }]}>
+                                <Select style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} size="large" placeholder="Sélectionner un niveau">
                                     <Option value="L1">L1</Option>
                                     <Option value="L2">L2</Option>
                                     <Option value="L3">L3</Option>
@@ -1706,25 +1673,22 @@ const UserManagement = ({ setUserName, onLogout }) => {
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Form.Item
-                        name="description"
-                        label="Description"
-                    >
-                        <Input.TextArea rows={4} className="rounded-lg" />
+                    <Form.Item name="description" label={<Text style={{ color: '#c8102e' }}>Description</Text>}>
+                        <Input.TextArea
+                            style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease', minHeight: '100px', resize: 'vertical' }}
+                            placeholder="Décrivez le formulaire..."
+                            autoSize={{ minRows: 3, maxRows: 6 }}
+                        />
                     </Form.Item>
-                    <Form.Item
-                        name="statut"
-                        label="Statut"
-                        valuePropName="checked"
-                    >
-                        <Switch checkedChildren="Actif" unCheckedChildren="Inactif" />
+                    <Form.Item name="statut" label={<Text style={{ color: '#c8102e' }}>Statut</Text>} valuePropName="checked">
+                        <Switch checkedChildren={<Text style={{ color: '#fff' }}>Actif</Text>} unCheckedChildren={<Text style={{ color: '#fff' }}>Inactif</Text>} style={{ background: '#ff69b4' }} />
                     </Form.Item>
                     <Form.Item>
                         <Button
+                            style={{ background: '#ff69b4', color: '#fff', borderRadius: '8px', transition: 'all 0.3s ease', '&:hover': { background: '#c8102e', color: '#fff' } }}
                             type="primary"
                             htmlType="submit"
                             size="large"
-                            className="w-full bg-red-500 hover:bg-red-600 border-none rounded-lg"
                             icon={<BookOutlined />}
                         >
                             {selectedFormulaire ? 'Mettre à jour' : 'Créer'} Formulaire
@@ -1734,56 +1698,45 @@ const UserManagement = ({ setUserName, onLogout }) => {
             </Modal>
 
             <Modal
-                title={<span><QuestionOutlined className="text-red-500 mr-2" /> {selectedQuestion ? 'Modifier Question' : 'Créer Question'}</span>}
+                title={<span style={{ color: '#ff69b4' }}>{selectedQuestion ? 'Modifier Question' : 'Ajouter une Question'}</span>}
                 open={questionModalVisible}
                 onCancel={() => setQuestionModalVisible(false)}
                 footer={null}
                 destroyOnClose
+                style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
             >
-                <Form form={questionForm} layout="vertical" onFinish={handleQuestionSubmit}>
-                    <Form.Item
-                        name="libelle"
-                        label="Libellé"
-                        rules={[{ required: true }]}
-                    >
-                        <Input.TextArea rows={3} className="rounded-lg" />
+                <Form form={questionForm} layout="vertical" onFinish={handleQuestionSubmit} initialValues={selectedQuestion || {}}>
+                    <Form.Item name="libelle" label={<Text style={{ color: '#c8102e' }}>Libellé</Text>} rules={[{ required: true, message: 'Veuillez entrer le libellé!' }]}>
+                        <Input.TextArea
+                            style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease', minHeight: '80px', resize: 'vertical' }}
+                            placeholder="Posez votre question ici..."
+                            autoSize={{ minRows: 2, maxRows: 4 }}
+                        />
                     </Form.Item>
-                    <Row gutter={16}>
+                    <Row gutter={[16, 16]}>
                         <Col span={12}>
-                            <Form.Item
-                                name="bareme"
-                                label="Barème"
-                                rules={[{ required: true, type: 'number', min: 0 }]}
-                            >
-                                <InputNumber size="large" className="w-full rounded-lg" />
+                            <Form.Item name="bareme" label={<Text style={{ color: '#c8102e' }}>Barème</Text>} rules={[{ required: true, type: 'number', min: 0, message: 'Barème invalide!' }]}>
+                                <InputNumber style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} size="large" className="w-full" placeholder="Ex: 10" />
                             </Form.Item>
                         </Col>
                         <Col span={12}>
-                            <Form.Item
-                                name="ponderation"
-                                label="Pondération"
-                                rules={[{ required: true, type: 'number', min: 0, max: 1 }]}
-                            >
-                                <InputNumber size="large" className="w-full rounded-lg" step={0.1} />
+                            <Form.Item name="ponderation" label={<Text style={{ color: '#c8102e' }}>Pondération</Text>} rules={[{ required: true, type: 'number', min: 0, max: 1, message: 'Doit être entre 0 et 1!' }]}>
+                                <InputNumber style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }} size="large" className="w-full" step={0.1} placeholder="Ex: 0.5" />
                             </Form.Item>
                         </Col>
                     </Row>
-                    <Form.Item
-                        name="statut"
-                        label="Statut"
-                        valuePropName="checked"
-                    >
-                        <Switch checkedChildren="Actif" unCheckedChildren="Inactif" />
+                    <Form.Item name="statut" label={<Text style={{ color: '#c8102e' }}>Statut</Text>} valuePropName="checked">
+                        <Switch checkedChildren={<Text style={{ color: '#fff' }}>Actif</Text>} unCheckedChildren={<Text style={{ color: '#fff' }}>Inactif</Text>} style={{ background: '#ff69b4' }} />
                     </Form.Item>
                     <Form.Item>
                         <Button
+                            style={{ background: '#ff69b4', color: '#fff', borderRadius: '8px', transition: 'all 0.3s ease', '&:hover': { background: '#c8102e', color: '#fff' } }}
                             type="primary"
                             htmlType="submit"
                             size="large"
-                            className="w-full bg-red-500 hover:bg-red-600 border-none rounded-lg"
                             icon={<QuestionOutlined />}
                         >
-                            {selectedQuestion ? 'Mettre à jour' : 'Créer'} Question
+                            {selectedQuestion ? 'Mettre à jour' : 'Ajouter'} Question
                         </Button>
                     </Form.Item>
                 </Form>
