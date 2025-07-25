@@ -8,17 +8,17 @@ import java.util.List;
 import java.util.Optional;
 
 
-
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     // Native query as fallback
     @Query(value = "SELECT * FROM \"user\"", nativeQuery = true)
     List<User> findAllWithNativeQuery();
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findByEmail(String email); // Gardez cette méthode si elle est utilisée ailleurs, mais préférez findByEmailIgnoreCase
+
+    // NOUVEAU : Méthode pour rechercher un utilisateur par email de manière insensible à la casse
+    Optional<User> findByEmailIgnoreCase(String email);
 
     Optional<User> findByEmailAndPassword(String email, String password);
-
-
 
 }
