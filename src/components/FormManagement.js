@@ -1,0 +1,599 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { Table, Modal, Form, Input, Switch, message, Space, Popconfirm, Button, Tag, Alert, DatePicker, Select, Row, Col, Typography } from 'antd';
+import { PlusCircleOutlined, EditOutlined, DeleteOutlined, LinkOutlined, CopyOutlined, QuestionOutlined, InfoCircleOutlined, FilePdfOutlined } from '@ant-design/icons';
+import { fetchFormulaires, createFormulaire, updateFormulaire, deleteFormulaire, fetchEvaluatorFormulaires, generateEvaluationLink, submitEvaluation, fetchQuestions } from '../services/apiService';
+import QuestionManagement from './QuestionManagement';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+const { Option } = Select;
+const { Text } = Typography;
+
+const FormManagement = ({ currentUser }) => {
+    const [formulaires, setFormulaires] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [formulaireModalVisible, setFormulaireModalVisible] = useState(false);
+    const [selectedFormulaire, setSelectedFormulaire] = useState(null);
+    const [form] = Form.useForm();
+    const [linkModalVisible, setLinkModalVisible] = useState(false);
+    const [generatedLink, setGeneratedLink] = useState('');
+    const [questionManagementModalVisible, setQuestionManagementModalVisible] = useState(false);
+    const [submissionModalVisible, setSubmissionModalVisible] = useState(false);
+    const [questionsForSubmission, setQuestionsForSubmission] = useState([]);
+    const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+    const [formDetails, setFormDetails] = useState(null);
+
+    const loadFormulaires = useCallback(async (page = 0, size = 10) => {
+        if (!currentUser?.authToken) return;
+        setLoading(true);
+        try {
+            let data;
+            if (currentUser.role === 'ADMIN') {
+                data = await fetchFormulaires(page, size, currentUser.authToken);
+                if (data && Array.isArray(data.content)) {
+                    setFormulaires(data.content);
+                } else if (Array.isArray(data)) {
+                    setFormulaires(data);
+                } else {
+                    setFormulaires([]);
+                }
+            } else if (currentUser.role === 'EVALUATOR') {
+                data = await fetchEvaluatorFormulaires(currentUser.id, currentUser.authToken);
+                setFormulaires(data || []);
+            }
+        } catch (error) {
+            message.error('Échec du chargement des formulaires: ' + error.message);
+            setFormulaires([]);
+        } finally {
+            setLoading(false);
+        }
+    }, [currentUser?.authToken, currentUser?.id, currentUser?.role]);
+
+    useEffect(() => {
+        if (currentUser?.authToken) {
+            loadFormulaires();
+        }
+    }, [currentUser?.authToken, loadFormulaires]);
+
+    const handleFormulaireSubmit = async () => {
+        try {
+            const values = await form.validateFields();
+            const formData = {
+                ...values,
+                id_createur: currentUser.id,
+                statut: values.statut !== undefined ? values.statut : true,
+            };
+            if (selectedFormulaire) {
+                await updateFormulaire(selectedFormulaire.id, formData, currentUser.authToken);
+                message.success('Formulaire mis à jour avec succès');
+            } else {
+                await createFormulaire(formData, currentUser.authToken);
+                message.success('Formulaire créé avec succès');
+            }
+            setFormulaireModalVisible(false);
+            loadFormulaires();
+        } catch (error) {
+            message.error(error.message || 'Opération échouée');
+        }
+    };
+
+    const handleDeleteFormulaire = async (id) => {
+        try {
+            await deleteFormulaire(id, currentUser.authToken);
+            message.success('Formulaire supprimé avec succès');
+            loadFormulaires();
+        } catch (error) {
+            message.error('Échec de la suppression du formulaire: ' + error.message);
+        }
+    };
+
+    const handleGenerateEvaluationLink = async (formId) => {
+        try {
+            const data = await generateEvaluationLink(formId, currentUser.authToken);
+            const link = `${window.location.origin}/evaluation?token=${data.token}`;
+            setGeneratedLink(link);
+            message.success('Lien généré ! Copiez-le.');
+        } catch (error) {
+            message.error('Échec de la génération du lien: ' + error.message);
+        }
+    };
+
+    const handleOpenSubmissionModal = async (record) => {
+        if (!currentUser?.authToken) return;
+        setSelectedFormulaire(record);
+        setLoading(true);
+        try {
+            const questions = await fetchQuestions(record.id, currentUser.authToken);
+            setQuestionsForSubmission(questions || []);
+            setSubmissionModalVisible(true);
+        } catch (error) {
+            message.error("Échec du chargement des questions pour la soumission: " + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleSubmitEvaluation = async (values) => {
+        try {
+            const answers = Object.keys(values).map(key => ({
+                questionId: parseInt(key.replace('question_', '')),
+                reponseText: values[key]
+            }));
+            await submitEvaluation(selectedFormulaire.id, answers, currentUser.authToken);
+            message.success('Formulaire soumis avec succès');
+            setSubmissionModalVisible(false);
+        } catch (error) {
+            message.error('Échec de la soumission: ' + error.message);
+        }
+    };
+
+    const handleShowDetails = async (record) => {
+        setSelectedFormulaire(record);
+        setLoading(true);
+        try {
+            const questions = await fetchQuestions(record.id, currentUser.authToken);
+            setFormDetails({
+                ...record,
+                questions: questions || [],
+                creationDate: record.creationDate || 'Non spécifiée',
+                creator: record.id_createur ? `Utilisateur ${record.id_createur}` : 'Inconnu',
+            });
+            setDetailsModalVisible(true);
+        } catch (error) {
+            message.error('Échec du chargement des détails: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleExportPDF = async (record) => {
+        setLoading(true);
+        try {
+            const questions = await fetchQuestions(record.id, currentUser.authToken);
+            const doc = new jsPDF();
+
+            // Colors and fonts
+            const primaryColor = '#ff69b4'; // Pink theme
+            const secondaryColor = '#c8102e'; // Red theme
+            doc.setFont('helvetica', 'normal');
+
+            // Header: Logo and Title
+            const logoUrl = 'data:image/png;base64,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';
+            doc.addImage(logoUrl, 'PNG', 10, 10, 50, 20);
+            doc.setFontSize(18);
+            doc.setTextColor(secondaryColor);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Formulaire d\'Évaluation', 70, 20);
+            doc.setLineWidth(0.5);
+            doc.setDrawColor(primaryColor);
+            doc.line(10, 35, 200, 35); // Horizontal line
+
+            // Form Details
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Détails du Formulaire', 10, 50);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            doc.text(`Titre: ${record.titre}`, 10, 60);
+            doc.text(`Niveau: ${record.niveau}`, 10, 70);
+            doc.text(`Date de Création: ${new Date(record.creationDate).toLocaleDateString()}`, 10, 80);
+            doc.text(`Créateur: Utilisateur ${record.id_createur || 'Inconnu'}`, 10, 90);
+            doc.text(`Statut: ${record.statut ? 'Actif' : 'Inactif'}`, 10, 100);
+
+            // Questions Section
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(secondaryColor);
+            doc.text('Questions', 10, 120);
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+
+            let y = 130;
+            questions.forEach((q, index) => {
+                // Background rectangle for each question
+                doc.setFillColor('#fff0f5'); // Light pink background
+                doc.rect(10, y - 5, 190, 25, 'F');
+                doc.setTextColor(secondaryColor);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`${index + 1}. ${q.libelle}`, 15, y);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Barème: ${q.bareme}, Pondération: ${q.ponderation}`, 20, y + 10);
+                y += 30;
+                if (y > 260) {
+                    doc.addPage();
+                    y = 20;
+                    // Repeat header on new page
+                    doc.addImage(logoUrl, 'PNG', 10, 10, 50, 20);
+                    doc.setFontSize(18);
+                    doc.setTextColor(secondaryColor);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Formulaire d\'Évaluation', 70, 20);
+                    doc.setLineWidth(0.5);
+                    doc.setDrawColor(primaryColor);
+                    doc.line(10, 35, 200, 35);
+                    y = 50;
+                }
+            });
+
+            // Footer
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Généré le ${new Date().toLocaleDateString()}`, 10, 280);
+            doc.text('Esprit - Système de Gestion des Formulaires', 140, 280);
+
+            doc.save(`Formulaire_${record.titre}.pdf`);
+            message.success('PDF exporté avec succès');
+        } catch (error) {
+            message.error('Échec de l\'exportation PDF: ' + error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const columns = [
+        { title: 'ID', dataIndex: 'id', key: 'id', width: 80 },
+        { title: 'Titre', dataIndex: 'titre', key: 'titre' },
+        { title: 'Niveau', dataIndex: 'niveau', key: 'niveau' },
+        {
+            title: 'Statut',
+            dataIndex: 'statut',
+            key: 'statut',
+            render: statut => (
+                <Tag color={statut ? 'green' : 'red'}>
+                    {statut ? 'Actif' : 'Inactif'}
+                </Tag>
+            ),
+            width: 120,
+        },
+        {
+            title: 'Actions',
+            key: 'actions',
+            width: 300,
+            render: (_, record) => (
+                currentUser?.role === 'ADMIN' ? (
+                    <Space>
+                        <EditOutlined
+                            className="text-red-500"
+                            onClick={() => {
+                                setSelectedFormulaire(record);
+                                form.setFieldsValue(record);
+                                setFormulaireModalVisible(true);
+                            }}
+                        />
+                        <Popconfirm
+                            title="Êtes-vous sûr de supprimer ce formulaire?"
+                            onConfirm={() => handleDeleteFormulaire(record.id)}
+                            okText="Oui"
+                            cancelText="Non"
+                        >
+                            <DeleteOutlined className="text-red-500" />
+                        </Popconfirm>
+                        <Button
+                            icon={<QuestionOutlined />}
+                            onClick={() => {
+                                setSelectedFormulaire(record);
+                                setQuestionManagementModalVisible(true);
+                            }}
+                            size="small"
+                        >
+                            Questions
+                        </Button>
+                        <LinkOutlined
+                            className="text-red-500"
+                            onClick={() => {
+                                setSelectedFormulaire(record);
+                                setLinkModalVisible(true);
+                                handleGenerateEvaluationLink(record.id);
+                            }}
+                        />
+                        <InfoCircleOutlined
+                            className="text-red-500 cursor-pointer"
+                            onClick={() => handleShowDetails(record)}
+                        />
+                        <FilePdfOutlined
+                            className="text-red-500 cursor-pointer"
+                            onClick={() => handleExportPDF(record)}
+                        />
+                    </Space>
+                ) : (
+                    <Space>
+                        <Button
+                            type="primary"
+                            onClick={() => handleOpenSubmissionModal(record)}
+                            className="bg-red-500 hover:bg-red-600"
+                        >
+                            Remplir
+                        </Button>
+                        <InfoCircleOutlined
+                            className="text-red-500 cursor-pointer"
+                            onClick={() => handleShowDetails(record)}
+                        />
+                    </Space>
+                )
+            ),
+        },
+    ];
+
+    return (
+        <div>
+            {currentUser?.role === 'ADMIN' && (
+                <Button
+                    type="primary"
+                    icon={<PlusCircleOutlined />}
+                    onClick={() => {
+                        setSelectedFormulaire(null);
+                        form.resetFields();
+                        setFormulaireModalVisible(true);
+                    }}
+                    className="bg-red-500 hover:bg-red-600 mb-6 rounded-lg"
+                    size="large"
+                >
+                    Ajouter Formulaire
+                </Button>
+            )}
+            <Table
+                columns={columns}
+                dataSource={formulaires}
+                loading={loading}
+                rowKey="id"
+                className="ant-table-striped"
+                pagination={{ pageSize: 10 }}
+                style={{ background: '#fff0f5', borderRadius: '12px', padding: '10px' }}
+            />
+            {currentUser?.role === 'ADMIN' && (
+                <Modal
+                    title={<span style={{ color: '#ff69b4', fontSize: '20px', fontWeight: 'bold' }}>{selectedFormulaire ? 'Modifier Formulaire' : 'Créer Nouvel Formulaire'}</span>}
+                    open={formulaireModalVisible}
+                    onCancel={() => setFormulaireModalVisible(false)}
+                    footer={null}
+                    destroyOnClose
+                    style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
+                >
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={handleFormulaireSubmit}
+                        style={{ maxWidth: '600px', margin: '0 auto' }}
+                    >
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="titre"
+                                    label={<Text style={{ color: '#c8102e', fontWeight: '500' }}>Titre</Text>}
+                                    rules={[{ required: true, message: 'Veuillez entrer le titre du formulaire!' }]}
+                                >
+                                    <Input
+                                        style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }}
+                                        placeholder="Entrez le titre"
+                                        size="large"
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="niveau"
+                                    label={<Text style={{ color: '#c8102e', fontWeight: '500' }}>Niveau</Text>}
+                                    rules={[{ required: true, message: 'Veuillez sélectionner le niveau du formulaire!' }]}
+                                >
+                                    <Select
+                                        style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }}
+                                        size="large"
+                                        placeholder="Sélectionner un niveau"
+                                    >
+                                        <Option value="L1">L1</Option>
+                                        <Option value="L2">L2</Option>
+                                        <Option value="L3">L3</Option>
+                                        <Option value="Master">Master</Option>
+                                    </Select>
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="description"
+                                    label={<Text style={{ color: '#c8102e', fontWeight: '500' }}>Description</Text>}
+                                >
+                                    <Input.TextArea
+                                        style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }}
+                                        rows={4}
+                                        placeholder="Entrez la description"
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row gutter={[16, 16]}>
+                            <Col span={12}>
+                                <Form.Item
+                                    name="statut"
+                                    label={<Text style={{ color: '#c8102e', fontWeight: '500' }}>Statut (Actif/Inactif)</Text>}
+                                    valuePropName="checked"
+                                >
+                                    <Switch />
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Form.Item>
+                            <Button
+                                style={{
+                                    background: '#ff69b4',
+                                    color: '#fff',
+                                    borderRadius: '8px',
+                                    transition: 'all 0.3s ease',
+                                    padding: '8px 20px',
+                                    fontSize: '16px',
+                                    fontWeight: '500',
+                                }}
+                                type="primary"
+                                htmlType="submit"
+                                size="large"
+                                icon={<PlusCircleOutlined />}
+                                onMouseEnter={(e) => { e.target.style.background = '#c8102e'; }}
+                                onMouseLeave={(e) => { e.target.style.background = '#ff69b4'; }}
+                            >
+                                {selectedFormulaire ? 'Modifier' : 'Créer'} Formulaire
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+            )}
+            {currentUser?.role === 'ADMIN' && (
+                <Modal
+                    title={<span style={{ color: '#ff69b4', fontSize: '20px', fontWeight: 'bold' }}>{selectedFormulaire ? `Questions pour "${selectedFormulaire.titre}"` : 'Gérer les Questions'}</span>}
+                    open={questionManagementModalVisible}
+                    onCancel={() => setQuestionManagementModalVisible(false)}
+                    footer={null}
+                    width={800}
+                    destroyOnClose
+                    style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
+                >
+                    {selectedFormulaire ? (
+                        <QuestionManagement
+                            currentUser={currentUser}
+                            selectedFormulaire={selectedFormulaire}
+                            onModalClose={() => setQuestionManagementModalVisible(false)}
+                        />
+                    ) : (
+                        <Alert message="Aucun formulaire sélectionné." type="info" showIcon />
+                    )}
+                </Modal>
+            )}
+            {currentUser?.role === 'ADMIN' && (
+                <Modal
+                    title={<span style={{ color: '#ff69b4', fontSize: '20px', fontWeight: 'bold' }}>Lien d'évaluation</span>}
+                    open={linkModalVisible}
+                    onCancel={() => setLinkModalVisible(false)}
+                    footer={null}
+                    destroyOnClose
+                    style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
+                >
+                    <Input
+                        value={generatedLink}
+                        readOnly
+                        addonAfter={<CopyOutlined onClick={() => navigator.clipboard.writeText(generatedLink)} />}
+                        size="large"
+                        className="rounded-lg mb-4"
+                        style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }}
+                    />
+                    <Form layout="vertical">
+                        <Form.Item
+                            name="expiration"
+                            label={<Text style={{ color: '#c8102e', fontWeight: '500' }}>Expiration (optionnel)</Text>}
+                        >
+                            <DatePicker
+                                showTime
+                                size="large"
+                                className="w-full rounded-lg"
+                                style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                onClick={async () => {
+                                    if (selectedFormulaire) await handleGenerateEvaluationLink(selectedFormulaire.id);
+                                }}
+                                size="large"
+                                className="w-full bg-red-500 hover:bg-red-600 border-none rounded-lg"
+                                icon={<LinkOutlined />}
+                                style={{ background: '#ff69b4', borderColor: '#ff69b4', transition: 'all 0.3s ease' }}
+                                onMouseEnter={(e) => { e.target.style.background = '#c8102e'; e.target.style.borderColor = '#c8102e'; }}
+                                onMouseLeave={(e) => { e.target.style.background = '#ff69b4'; e.target.style.borderColor = '#ff69b4'; }}
+                            >
+                                Régénérer Lien
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+            )}
+            {currentUser?.role === 'EVALUATOR' && (
+                <Modal
+                    title={<span style={{ color: '#ff69b4', fontSize: '20px', fontWeight: 'bold' }}>{selectedFormulaire ? `Remplir "${selectedFormulaire.titre}"` : 'Remplir Formulaire'}</span>}
+                    open={submissionModalVisible}
+                    onCancel={() => setSubmissionModalVisible(false)}
+                    footer={null}
+                    destroyOnClose
+                    style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
+                >
+                    {selectedFormulaire && questionsForSubmission.length > 0 ? (
+                        <Form onFinish={handleSubmitEvaluation}>
+                            {questionsForSubmission.map((q, index) => (
+                                <Form.Item
+                                    key={q.id}
+                                    label={<Text style={{ color: '#c8102e', fontWeight: '500' }}>{`${index + 1}. ${q.libelle} (Barème: ${q.bareme}, Pondération: ${q.ponderation})`}</Text>}
+                                    name={`question_${q.id}`}
+                                    rules={[{ required: true, message: 'Veuillez entrer une réponse!' }]}
+                                >
+                                    <Input.TextArea
+                                        rows={2}
+                                        style={{ borderRadius: '8px', borderColor: '#ff69b4', transition: 'all 0.3s ease' }}
+                                    />
+                                </Form.Item>
+                            ))}
+                            <Form.Item>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    size="large"
+                                    style={{
+                                        background: '#ff69b4',
+                                        color: '#fff',
+                                        borderRadius: '8px',
+                                        transition: 'all 0.3s ease',
+                                        padding: '8px 20px',
+                                        fontSize: '16px',
+                                        fontWeight: '500',
+                                    }}
+                                    onMouseEnter={(e) => { e.target.style.background = '#c8102e'; }}
+                                    onMouseLeave={(e) => { e.target.style.background = '#ff69b4'; }}
+                                >
+                                    Soumettre l'évaluation
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    ) : (
+                        <Alert message="Aucune question disponible pour ce formulaire." type="info" showIcon />
+                    )}
+                </Modal>
+            )}
+            <Modal
+                title={<span style={{ color: '#ff69b4', fontSize: '20px', fontWeight: 'bold' }}>Détails du Formulaire</span>}
+                open={detailsModalVisible}
+                onCancel={() => setDetailsModalVisible(false)}
+                footer={null}
+                destroyOnClose
+                style={{ borderRadius: '12px', background: '#fff0f5', padding: '20px', boxShadow: '0 4px 12px rgba(255, 105, 180, 0.2)' }}
+            >
+                {formDetails && (
+                    <div>
+                        <Typography.Paragraph><Text strong style={{ color: '#ff69b4' }}>Titre :</Text> {formDetails.titre}</Typography.Paragraph>
+                        <Typography.Paragraph><Text strong style={{ color: '#ff69b4' }}>Niveau :</Text> {formDetails.niveau}</Typography.Paragraph>
+                        <Typography.Paragraph><Text strong style={{ color: '#ff69b4' }}>Date de Création :</Text> {new Date(formDetails.creationDate).toLocaleDateString()}</Typography.Paragraph>
+                        <Typography.Paragraph><Text strong style={{ color: '#ff69b4' }}>Créateur :</Text> {formDetails.creator}</Typography.Paragraph>
+                        <Typography.Paragraph><Text strong style={{ color: '#ff69b4' }}>Questions :</Text></Typography.Paragraph>
+                        {formDetails.questions.length > 0 ? (
+                            <ul style={{ listStyleType: 'none', paddingLeft: 0 }}>
+                                {formDetails.questions.map((q, index) => (
+                                    <li key={q.id} style={{ marginBottom: '10px', background: '#ffe4e6', padding: '10px', borderRadius: '8px' }}>
+                                        <Text style={{ color: '#c8102e' }}>{index + 1}. {q.libelle}</Text>
+                                        <br />
+                                        <Text style={{ color: '#ff69b4' }}>Barème: {q.bareme}, Pondération: {q.ponderation}</Text>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <Alert message="Aucune question associée." type="info" showIcon />
+                        )}
+                    </div>
+                )}
+            </Modal>
+        </div>
+    );
+};
+
+export default FormManagement;

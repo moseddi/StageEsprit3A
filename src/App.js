@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'r
 import Admin from './components/Admin';
 import Accueil from './components/Accueil';
 import { Layout, Menu, theme, Image } from 'antd';
-import { HomeOutlined, TeamOutlined, CopyrightOutlined, LogoutOutlined } from '@ant-design/icons';
+import { HomeOutlined, TeamOutlined, CopyrightOutlined, LogoutOutlined, FormOutlined, BookOutlined, ProfileOutlined } from '@ant-design/icons';
 import espritLogo from './esprit-logo.png';
 import './App.css';
 
@@ -47,18 +47,44 @@ const AppContent = () => {
                             label: 'Accueil',
                             onClick: () => navigate('/'),
                         },
-                        {
-                            key: '2',
-                            icon: <TeamOutlined className="text-red-500" />,
-                            label: 'Gestion des Utilisateurs',
-                            onClick: () => navigate('/utilisateurs'),
-                        },
-                        ...(currentUser ? [{
-                            key: '3',
-                            icon: <LogoutOutlined className="text-red-500" />,
-                            label: 'Déconnexion',
-                            onClick: handleLogout,
-                        }] : []),
+                        ...(currentUser ? [
+                            {
+                                key: '2',
+                                icon: <TeamOutlined className="text-red-500" />,
+                                label: 'Gestion des Utilisateurs',
+                                onClick: () => navigate('/utilisateurs'),
+                            },
+                            {
+                                key: '3',
+                                icon: <FormOutlined className="text-red-500" />,
+                                label: 'Formulaires',
+                                onClick: () => navigate('/formulaires'),
+                            },
+                            {
+                                key: '4',
+                                icon: <TeamOutlined className="text-red-500" />,
+                                label: 'Classes',
+                                onClick: () => navigate('/classes'),
+                            },
+                            {
+                                key: '5',
+                                icon: <BookOutlined className="text-red-500" />,
+                                label: 'Étudiants',
+                                onClick: () => navigate('/etudiants'),
+                            },
+                            {
+                                key: '6',
+                                icon: <ProfileOutlined className="text-red-500" />,
+                                label: 'Profil',
+                                onClick: () => navigate('/profil'),
+                            },
+                            {
+                                key: '7',
+                                icon: <LogoutOutlined className="text-red-500" />,
+                                label: 'Déconnexion',
+                                onClick: handleLogout,
+                            },
+                        ] : []),
                     ]}
                 />
             </Header>
@@ -75,6 +101,22 @@ const AppContent = () => {
                         <Route path="/" element={<Accueil />} />
                         <Route
                             path="/utilisateurs"
+                            element={<Admin setUserName={(nom) => setCurrentUser(prev => ({ ...prev, nom }))} onLogout={handleLogout} />}
+                        />
+                        <Route
+                            path="/formulaires"
+                            element={<Admin setUserName={(nom) => setCurrentUser(prev => ({ ...prev, nom }))} onLogout={handleLogout} />}
+                        />
+                        <Route
+                            path="/classes"
+                            element={<Admin setUserName={(nom) => setCurrentUser(prev => ({ ...prev, nom }))} onLogout={handleLogout} />}
+                        />
+                        <Route
+                            path="/etudiants"
+                            element={<Admin setUserName={(nom) => setCurrentUser(prev => ({ ...prev, nom }))} onLogout={handleLogout} />}
+                        />
+                        <Route
+                            path="/profil"
                             element={<Admin setUserName={(nom) => setCurrentUser(prev => ({ ...prev, nom }))} onLogout={handleLogout} />}
                         />
                         <Route path="*" element={<Navigate to="/" replace />} />
