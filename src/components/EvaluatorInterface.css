@@ -1,0 +1,76 @@
+.evaluator-interface-container {
+    padding: 20px;
+    background: #fff0f5;
+}
+
+.notification-button {
+    background: #ff69b4 !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.notification-button:hover {
+    background: #c8102e !important;
+}
+
+.notification-modal .ant-modal-content,
+.submission-modal .ant-modal-content {
+    background: #fff0f5 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2) !important;
+}
+
+.modal-title {
+    color: #ff69b4;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.form-table {
+    background: #fff0f5 !important;
+    border-radius: 12px !important;
+}
+
+.action-button {
+    background: #ff69b4 !important;
+    border-color: #ff69b4 !important;
+    transition: all 0.3s ease !important;
+}
+
+.action-button:hover {
+    background: #c8102e !important;
+    border-color: #c8102e !important;
+}
+
+.question-label {
+    color: #c8102e;
+    font-weight: 500;
+}
+
+.question-textarea {
+    border-radius: 8px !important;
+    border-color: #ff69b4 !important;
+    transition: all 0.3s ease !important;
+}
+
+.question-textarea:hover,
+.question-textarea:focus {
+    border-color: #c8102e !important;
+    box-shadow: 0 0 0 2px rgba(200, 16, 46, 0.2) !important;
+}
+
+.submit-button {
+    background: #ff69b4 !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+    padding: 8px 20px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.submit-button:hover {
+    background: #c8102e !important;
+}
