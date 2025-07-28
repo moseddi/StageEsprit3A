@@ -1,27 +1,71 @@
-.logo-esprit {
-  width: 120px;
-  animation: zoom-in 1.2s ease-in-out;
+/* === Carousel principal === */
+.carousel-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.fade-in {
-  opacity: 0;
-  animation: fadeIn 1.5s ease forwards;
-  animation-delay: 0.5s;
+.carousel-track {
+  display: flex;
+  width: 300%; /* 3 images */
+  height: 100%;
+  animation: slide 9s infinite;
 }
 
-@keyframes zoom-in {
-  from {
-    transform: scale(0.6);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Animation du slide (défilement horizontal) */
+@keyframes slide {
+  0% { transform: translateX(0); }
+  30% { transform: translateX(0); }
+  33% { transform: translateX(-100%); }
+  63% { transform: translateX(-100%); }
+  66% { transform: translateX(-200%); }
+  96% { transform: translateX(-200%); }
+  100% { transform: translateX(0); }
+}
+
+/* Texte centré */
+.carousel-caption-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  z-index: 10;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Animation du texte */
+.animated-title {
+  font-size: 3rem;
+  font-weight: bold;
+  animation: zoomIn 1.5s ease forwards;
+}
+
+.animated-subtitle {
+  font-size: 1.3rem;
+  margin-top: 10px;
+  animation: fadeIn 2s ease forwards;
+}
+
+.highlight {
+  color: #a762bd;
+}
+
+/* Animations clés */
+@keyframes zoomIn {
+  from { transform: scale(0.5); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 @keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }

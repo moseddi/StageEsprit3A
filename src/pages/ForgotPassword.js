@@ -21,34 +21,77 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: "400px" }}>
-      <h2 className="text-center mb-4">Mot de passe oublié</h2>
+    <div
+      className="container mt-5"
+      style={{ maxWidth: "400px", borderRadius: "15px", padding: "20px", boxShadow: "0 0 15px rgba(167, 98, 189, 0.4)" }}
+    >
+      <h2
+        className="text-center mb-4"
+        style={{ color: "#a762bd", fontWeight: "700", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}
+      >
+        Mot de passe oublié
+      </h2>
 
-      {message && <div className="alert alert-info">{message}</div>}
+      {message && (
+        <div
+          className="alert"
+          style={{
+            backgroundColor: "#f3eaff",
+            color: "#7a3e95",
+            border: "1px solid #a762bd",
+            fontWeight: "600",
+          }}
+          role="alert"
+        >
+          {message}
+        </div>
+      )}
 
       <div className="mb-3">
-        <label className="form-label">Email</label>
+        <label
+          className="form-label"
+          style={{ color: "#7a3e95", fontWeight: "600" }}
+        >
+          Email
+        </label>
         <input
           type="email"
-          className="form-control"
+          className="form-control border border-2"
           placeholder="ex: utilisateur@esprit.tn"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          style={{ borderColor: "#a762bd" }}
         />
       </div>
 
       <div className="mb-3">
-        <label className="form-label">Nouveau mot de passe</label>
+        <label
+          className="form-label"
+          style={{ color: "#7a3e95", fontWeight: "600" }}
+        >
+          Nouveau mot de passe
+        </label>
         <input
           type="password"
-          className="form-control"
+          className="form-control border border-2"
           placeholder="******"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
+          style={{ borderColor: "#a762bd" }}
         />
       </div>
 
-      <button className="btn btn-primary w-100" onClick={handleReset}>
+      <button
+        className="btn w-100"
+        style={{
+          backgroundColor: "#a762bd",
+          color: "white",
+          fontWeight: "600",
+          borderRadius: "6px",
+          border: "none",
+        }}
+        onClick={handleReset}
+      >
         Réinitialiser
       </button>
     </div>

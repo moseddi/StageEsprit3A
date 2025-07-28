@@ -1,0 +1,26 @@
+.custom-navbar {
+  height: 20px; /* Hauteur réduite */
+  padding-left: 30px; /* Légère marge à gauche */
+  padding-right: 30px;
+  display: flex;
+  align-items: center; /* Centrer verticalement le contenu */
+}
+
+.custom-navbar .navbar-brand img {
+  height: 40px; /* Réduit la taille du logo pour s'adapter */
+}
+
+.custom-navbar .navbar-brand {
+  margin-right: 40px; /* Espace entre le logo et les liens */
+}
+
+.custom-links .nav-link {
+  color: #333 !important;
+  font-size: 1.1rem; /* Taille légèrement réduite */
+  transition: color 0.3s ease;
+  padding: 5px 10px; /* Réduit l'espacement interne */
+}
+
+.custom-links .nav-link:hover {
+  color: #116dff !important; /* Couleur bleue au survol */
+}

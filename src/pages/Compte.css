@@ -1,20 +1,94 @@
-.container {
-  background-color: #ffffff;
+.compte-page {
+  background-color: #f9f9fb;
+  min-height: 100vh;
+  padding-top: 120px;
+  color: #4a4a4a;
+  font-family: Arial, sans-serif;
+}
+
+/* Titre */
+.compte-title {
+  color: #7a3e95;
+  font-weight: bold;
+  animation: fadeIn 1.2s ease-in-out;
+}
+
+/* Formulaire stylé */
+.compte-form {
+  background: #ffffff;
+  padding: 25px;
   border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(122, 62, 149, 0.2);
+  max-width: 600px;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+}
+.compte-form:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 25px rgba(122, 62, 149, 0.3);
 }
 
-label {
-  font-weight: 500;
+.compte-form label {
+  font-weight: bold;
+  color: #7a3e95;
 }
-
-input[type="file"] {
-  cursor: pointer;
-}
-
-.img-thumbnail {
+.compte-form input[type="text"],
+.compte-form input[type="email"],
+.compte-form input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 2px solid #d8b4e2;
   border-radius: 8px;
-  max-height: 150px;
+  transition: all 0.3s ease;
+}
+.compte-form input:focus {
+  border-color: #a762bd;
+  box-shadow: 0 0 8px #caa6e6;
+  transform: scale(1.02);
+}
+
+/* Champ email readonly */
+.readonly-field {
+  background-color: #f0e6fa;
+  color: #5a189a;
+  font-weight: bold;
+  border: none;
+}
+
+/* Photo profil */
+.preview-photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #a762bd;
   object-fit: cover;
+  animation: pulse 2s infinite;
+}
+
+/* Bouton animé */
+.btn-submit {
+  background-color: #7a3e95;
+  color: white;
+  font-weight: bold;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+.btn-submit:hover {
+  background-color: #9b5cc9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(122, 62, 149, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }

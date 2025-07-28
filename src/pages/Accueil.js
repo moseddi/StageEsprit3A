@@ -1,150 +1,97 @@
-import React, { useState } from "react";
-import espritLogo from "../assets/esprit.png";
-import formulaireImg from "../assets/formulaire.png";
-import evaluationImg from "../assets/evaluation.png";
-import userImg from "../assets/user.png";
-import { motion } from "framer-motion";
-import './Sidebar.css';
-import './Accueil.css';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import espritLogo from "../assets/logo1.png";
+import img4 from "../assets/img4.jpg";
+import img5 from "../assets/img5.jpg";
+import img6 from "../assets/img6.jpg";
+import "./Accueil.css";
 
-function Accueil() {
-  const [collapsed, setCollapsed] = useState(false);
+export default function Accueil() {
+  const [userName, setUserName] = useState("");
+  const [userPhoto, setUserPhoto] = useState("");
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
+
+  const images = [img4, img5, img6];
+
+  useEffect(() => {
+    setUserName(localStorage.getItem("userNom") || "Utilisateur");
+    setUserPhoto(localStorage.getItem("userPhoto") || "");
+
+    // Faire défiler les images toutes les 4 secondes
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % images.length);
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("userEmail");
-    window.location.href = "/";
+    localStorage.clear();
+    navigate("/");
   };
 
   return (
-    <div className="d-flex flex-column bg-light" style={{ minHeight: "100vh" }}>
-      {/* Conteneur principal avec Sidebar + Contenu */}
-      <div className="d-flex flex-grow-1">
-        {/* Sidebar */}
-        <div className={`sidebar ${collapsed ? "collapsed" : ""}`}>
-          <button className="toggle-btn" onClick={() => setCollapsed(!collapsed)}>
-            {collapsed ? "»" : "«"}
-          </button>
+    <div className="accueil-page">
+      {/* NAVBAR */}
+      <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top custom-navbar px-4">
+        <div className="container-fluid d-flex justify-content-between align-items-center">
+          {/* Logo */}
+          <Link className="navbar-brand d-flex align-items-center" to="/accueil">
+            <img src={espritLogo} alt="Logo" className="me-2" style={{ height: "80px" }} />
+          </Link>
 
-          <div className="text-center py-4">
-            <motion.img
-              src={espritLogo}
-              alt="Esprit"
-              className="logo-esprit mb-3"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 0.8 }}
-            />
-            {!collapsed && <h5 className="text-white">EspritEval</h5>}
-          </div>
+          {/* Liens + Profil */}
+          <div className="d-flex align-items-center gap-4">
+            <ul className="navbar-nav nav-links d-flex align-items-center gap-3">
+              <li className="nav-item"><Link className="nav-link active" to="/accueil">Accueil</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/apropos">À propos de nous</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/compte">Compte</Link></li>
+              <li className="nav-item"><Link className="nav-link" to="/dashboard">Dashboard</Link></li>
+            </ul>
 
-          <ul className="nav flex-column px-3">
-            {[
-              ["🏠 Accueil", "/accueil"],
-              ["👤 Compte", "/compte"],      // ✅ Lien corrigé vers /compte
-              ["📝 Formulaires", "#"],
-              ["❓ Questions", "#"]
-            ].map(([label, href]) => (
-              <li className="nav-item" key={label}>
-                <a className="nav-link text-white" href={href}>
-                  {label.split(" ")[0]} {collapsed ? "" : label.split(" ")[1]}
-                </a>
-              </li>
-            ))}
-
-            <li className="nav-item mt-3">
-              <button className="btn btn-outline-light w-100" onClick={handleLogout}>
-                🚪 {collapsed ? "" : "Se déconnecter"}
-              </button>
-            </li>
-          </ul>
-        </div>
-
-        {/* Contenu principal */}
-        <motion.div
-          className="flex-grow-1 p-4"
-          style={{ marginLeft: collapsed ? "70px" : "220px" }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="text-center mb-5">
-            <motion.h1
-              className="fw-bold"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8 }}
-            >
-              Bienvenue sur <span className="text-primary">EspritEval</span> 🎓
-            </motion.h1>
-            <p className="text-muted">
-              Une plateforme intelligente pour créer, gérer et analyser les évaluations.
-            </p>
-          </div>
-
-          <div className="mb-5 px-3">
-            <h3 className="text-decoration-underline">🔍 À propos de l'application</h3>
-            <p>
-              EspritEval est une application web dédiée à l'évaluation personnalisée
-              des étudiants. Les utilisateurs peuvent créer des formulaires dynamiques,
-              ajouter des questions, attribuer des barèmes et suivre les réponses.
-            </p>
-          </div>
-
-          <div className="row text-center">
-            {[{
-              img: formulaireImg,
-              title: "Formulaires dynamiques",
-              desc: "Créez et attribuez facilement des formulaires aux classes ciblées."
-            }, {
-              img: evaluationImg,
-              title: "Évaluations efficaces",
-              desc: "Centralisez les réponses et analysez les performances."
-            }, {
-              img: userImg,
-              title: "Gestion des utilisateurs",
-              desc: "Administrateurs et évaluateurs ont chacun leurs rôles dédiés."
-            }].map((item, i) => (
-              <motion.div
-                className="col-md-4 mb-4"
-                key={i}
-                whileHover={{ scale: 1.05 }}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.2 }}
-              >
+            {/* Profil utilisateur */}
+            <div className="d-flex align-items-center">
+              {userPhoto && (
                 <img
-                  src={item.img}
-                  alt={item.title}
-                  className="img-fluid rounded shadow-lg mb-3"
-                  style={{ height: "200px", objectFit: "cover" }}
+                  src={userPhoto}
+                  alt="Profil"
+                  className="rounded-circle me-2"
+                  style={{ width: 40, height: 40, objectFit: "cover", border: "2px solid #a762bd" }}
                 />
-                <h5 className="fw-bold">{item.title}</h5>
-                <p>{item.desc}</p>
-              </motion.div>
-            ))}
+              )}
+              <span style={{ fontWeight: "bold", color: "#7a3e95", marginRight: "10px" }}>{userName}</span>
+
+              {/* Bouton Déconnexion */}
+              <button
+                onClick={handleLogout}
+                className="btn btn-outline-danger btn-sm"
+              >
+                Déconnexion
+              </button>
+            </div>
           </div>
-        </motion.div>
+        </div>
+      </nav>
+
+      {/* CAROUSEL SLIDE */}
+      <div className="carousel-container">
+        <img src={images[currentSlide]} alt="Slide" className="carousel-img" />
       </div>
 
-      {/* ✅ Footer */}
-      <motion.footer
-        className="bg-dark text-white text-center py-3 footer"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 1 }}
-      >
-        <div>
-          <p className="mb-1">
-            © {new Date().getFullYear()} <strong>EspritEval</strong> – Tous droits réservés.
-          </p>
-          <p className="small">
-            Propulsé par <span className="text-warning">ESPRIT</span> |
-            <a href="mailto:contact@espriteval.tn" className="text-light ms-1">Contactez-nous</a>
-          </p>
-        </div>
-      </motion.footer>
+      {/* TEXTE AU CENTRE */}
+      <div className="carousel-caption-container">
+        <h1 className="main-title animated-title">
+          Bienvenue sur <span className="highlight">EspritEval</span>
+        </h1>
+        <p className="subtitle animated-subtitle">
+          Une plateforme moderne pour créer et analyser vos évaluations efficacement.
+        </p>
+        <Link to="/apropos" className="btn btn-primary btn-lg mt-3 shadow">
+  Découvrir maintenant
+</Link>
+
+      </div>
     </div>
   );
 }
-
-export default Accueil;
