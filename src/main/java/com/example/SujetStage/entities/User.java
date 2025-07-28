@@ -1,7 +1,9 @@
 package com.example.SujetStage.entities;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "users")
 public class User {
@@ -12,7 +14,7 @@ public class User {
 
     private String nom;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     private String password;
@@ -23,19 +25,12 @@ public class User {
 
     private String identite;
 
-    // Le chemin du fichier image (stocké comme String)
-    private String photoPath;
     @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "photo")
     private byte[] photo;
 
-    public byte[] getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
-    }
-    // 🔽 Getters & Setters
+    // Getters & Setters
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -58,6 +53,6 @@ public class User {
     public String getIdentite() { return identite; }
     public void setIdentite(String identite) { this.identite = identite; }
 
-    public String getPhotoPath() { return photoPath; }
-    public void setPhotoPath(String photoPath) { this.photoPath = photoPath; }
+    public byte[] getPhoto() { return photo; }
+    public void setPhoto(byte[] photo) { this.photo = photo; }
 }

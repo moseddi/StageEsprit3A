@@ -1,15 +1,23 @@
 package com.example.SujetStage.controllers;
 
+import com.example.SujetStage.dto.SecurityCaptureRequest;
+import com.example.SujetStage.dto.UserResponseDto;
 import com.example.SujetStage.entities.User;
 import com.example.SujetStage.repositories.UserRepository;
+import com.example.SujetStage.services.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.SujetStage.entities.User;
+import com.example.SujetStage.config.JwtService;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -19,129 +27,125 @@ public class UserController {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
     @Autowired
-    public UserController(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserController(PasswordEncoder passwordEncoder,
+                          UserRepository userRepository,
+                          EmailService emailService,
+                          JwtService jwtService,
+                          UserDetailsService userDetailsService) {
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
+        this.emailService = emailService;
+        this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
-    // Enregistrement d’un nouvel utilisateur
-    @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserDto userDto) {
-        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email déjà utilisé.");
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody User loginRequest) {
+        String email = loginRequest.getEmail();
+        String password = loginRequest.getPassword();
+
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Email ou mot de passe incorrect");
         }
 
-        User user = new User();
-        user.setEmail(userDto.getEmail());
-        user.setNom(userDto.getNom());
-        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        user.setRole(userDto.getRole());
+        User user = userOpt.get();
+
+        // Vérification mot de passe (pas de verrouillage infini)
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mot de passe incorrect.");
+        }
+
+        // Générer le token JWT
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
+        String token = jwtService.generateToken(userDetails);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", token);
+        response.put("user", new UserResponseDto(user));
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody User newUser) {
+        if (userRepository.findByEmail(newUser.getEmail()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Cet email est déjà utilisé");
+        }
+        if (newUser.getAdresse() == null) newUser.setAdresse("");
+        if (newUser.getIdentite() == null) newUser.setIdentite("");
+        newUser.setPhoto(null);
+        newUser.setRole("USER");
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        userRepository.save(newUser);
+        return ResponseEntity.ok("Compte créé avec succès");
+    }
+
+    @GetMapping("/by-email")
+    public ResponseEntity<UserResponseDto> getUserByEmail(@RequestParam String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        return userOpt.map(user -> ResponseEntity.ok(new UserResponseDto(user)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @PostMapping(value = "/update-profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserResponseDto> updateProfile(
+            @RequestParam String email,
+            @RequestParam String nom,
+            @RequestParam String adresse,
+            @RequestParam String identite,
+            @RequestParam(value = "photo", required = false) MultipartFile photoFile
+    ) throws IOException {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        User user = userOpt.get();
+        user.setNom(nom);
+        user.setAdresse(adresse);
+        user.setIdentite(identite);
+
+        if (photoFile != null && !photoFile.isEmpty()) {
+            user.setPhoto(photoFile.getBytes());
+        }
 
         userRepository.save(user);
-        return ResponseEntity.ok("Utilisateur enregistré avec succès.");
+        return ResponseEntity.ok(new UserResponseDto(user));
     }
 
-    // Connexion utilisateur
-    @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
-        Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                return ResponseEntity.ok("✅ Connexion réussie");
-            }
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("❌ Email ou mot de passe incorrect");
-    }
-
-    // Réinitialisation du mot de passe
-    @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordRequest request) {
-        Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
-            userRepository.save(user);
-            return ResponseEntity.ok("Mot de passe réinitialisé avec succès.");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé.");
-    }
-
-    // Mise à jour du profil utilisateur avec upload photo
-    @PostMapping("/update-profile")
-    public ResponseEntity<String> updateProfile(
-            @RequestParam("email") String email,
-            @RequestParam("nom") String nom,
-            @RequestParam("adresse") String adresse,
-            @RequestParam("identite") String identite,
-            @RequestParam(value = "photo", required = false) MultipartFile photo
-    ) {
+    @GetMapping("/role")
+    public ResponseEntity<Map<String, String>> getUserRole(@RequestParam String email) {
         Optional<User> userOpt = userRepository.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            user.setNom(nom);
-            user.setAdresse(adresse);
-            user.setIdentite(identite);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Utilisateur introuvable"));
+        }
+        return ResponseEntity.ok(Map.of("role", userOpt.get().getRole()));
+    }
 
-            if (photo != null && !photo.isEmpty()) {
-                try {
-                    user.setPhoto(photo.getBytes());
-                } catch (IOException e) {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body("Erreur lors du traitement de la photo.");
-                }
+    @PostMapping("/security-capture")
+    public ResponseEntity<String> securityCapture(@RequestBody SecurityCaptureRequest request) {
+        Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé");
+        }
+
+        try {
+            String base64Image = request.getImage();
+            if (base64Image.contains(",")) {
+                base64Image = base64Image.split(",")[1];
             }
 
-            userRepository.save(user);
-            return ResponseEntity.ok("✅ Profil mis à jour avec succès.");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur introuvable.");
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            emailService.sendSecurityAlert(request.getEmail(), imageBytes);
+
+            return ResponseEntity.ok("Email de sécurité envoyé avec la photo");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'envoi de l'email");
         }
-    }
-
-    // DTO d’inscription utilisateur
-    public static class UserDto {
-        private String email;
-        private String nom;
-        private String password;
-        private String role;
-
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-
-        public String getNom() { return nom; }
-        public void setNom(String nom) { this.nom = nom; }
-
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-
-        public String getRole() { return role; }
-        public void setRole(String role) { this.role = role; }
-    }
-
-    // Classe pour requête login (à créer dans payload ou ici)
-    public static class LoginRequest {
-        private String email;
-        private String password;
-
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-    }
-
-    // Classe pour requête reset password (à créer dans payload ou ici)
-    public static class ResetPasswordRequest {
-        private String email;
-        private String newPassword;
-
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-
-        public String getNewPassword() { return newPassword; }
-        public void setNewPassword(String newPassword) { this.newPassword = newPassword; }
     }
 }
