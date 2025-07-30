@@ -1,24 +1,43 @@
 package org.example.sujetstage3a.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 @Entity
 @Table(name = "reponse_question")
-@Data
 public class ReponseQuestion {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "id_question")
+    private Long questionId;
+
+    @Column(name = "valeur")
     private String valeur;
 
-    @ManyToOne
-    @JoinColumn(name = "id_question", nullable = false)
-    private Question question;
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "id_reponse_formulaire", nullable = false)
-    private ReponseFormulaire reponseFormulaire;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
+    }
+
+    public String getValeur() {
+        return valeur;
+    }
+
+    public void setValeur(String valeur) {
+        this.valeur = valeur;
+    }
 }

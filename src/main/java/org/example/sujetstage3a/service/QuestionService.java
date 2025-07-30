@@ -47,4 +47,7 @@ public class QuestionService {
                 .orElseThrow(() -> new RuntimeException("Question non trouvée"));
         questionRepository.delete(q);
     }
+    public List<Question> findByFormulaireId(Integer formulaireId) {
+        return questionRepository.findByFormulaireId(formulaireId);
+    }
 }

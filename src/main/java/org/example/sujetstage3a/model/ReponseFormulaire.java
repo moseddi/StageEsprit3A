@@ -1,32 +1,54 @@
 package org.example.sujetstage3a.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-
-import java.util.List;
 
 @Entity
 @Table(name = "reponse_formulaire")
-@Data
 public class ReponseFormulaire {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "id_formulaire")
+    private Integer formulaireId;
+
+    @Column(name = "commentaire")
     private String commentaire;
 
     @Column(name = "note_global")
     private Float noteGlobal;
 
-    @ManyToOne
-    @JoinColumn(name = "id_utilisateur", nullable = false)
-    private User utilisateur;
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "id_formulaire", nullable = false)
-    private Formulaire formulaire;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    @OneToMany(mappedBy = "reponseFormulaire")
-    private List<ReponseQuestion> reponsesQuestions;
+    public Integer getFormulaireId() {
+        return formulaireId;
+    }
+
+    public void setFormulaireId(Integer formulaireId) {
+        this.formulaireId = formulaireId;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
+    }
+
+    public Float getNoteGlobal() {
+        return noteGlobal;
+    }
+
+    public void setNoteGlobal(Float noteGlobal) {
+        this.noteGlobal = noteGlobal;
+    }
 }

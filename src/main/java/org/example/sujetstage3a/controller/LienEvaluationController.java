@@ -36,4 +36,5 @@ public class LienEvaluationController {
         return lienEvaluationService.getLinkByToken(token)
                 .orElseThrow(() -> new RuntimeException("Lien introuvable ou expiré"));
     }
+
 }
