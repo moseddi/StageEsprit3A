@@ -6,6 +6,83 @@ import { loginUser, requestForgotPassword, resetPassword as resetPasswordApi } f
 
 const { Text, Title } = Typography;
 
+const styles = {
+  primaryColor: '#c8102e',
+  cardStyle: {
+    width: '100%',
+    maxWidth: '400px',
+    borderRadius: '12px',
+    background: 'rgba(255, 255, 255, 0.95)',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.1)',
+    padding: '24px',
+    border: '1px solid #e8e8e8',
+    backdropFilter: 'blur(10px)',
+  },
+  containerStyle: {
+    minHeight: '100vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  modalStyle: {
+    borderRadius: '12px',
+    background: '#ffffff',
+    padding: '24px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+  },
+  inputStyle: {
+    borderRadius: '8px',
+    borderColor: '#d9d9d9',
+    background: '#ffffff',
+    color: '#000000',
+    fontSize: '16px',
+    padding: '12px',
+    transition: 'all 0.3s ease',
+  },
+  buttonStyle: {
+    background: '#c8102e',
+    color: '#ffffff',
+    borderRadius: '8px',
+    fontSize: '16px',
+    fontWeight: '500',
+    border: 'none',
+    width: '100%',
+    height: '48px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'background-color 0.3s ease, box-shadow 0.3s ease',
+  },
+  linkStyle: {
+    color: '#c8102e',
+    fontSize: '14px',
+    transition: 'color 0.3s ease',
+  },
+  alertStyle: {
+    background: '#fafafa',
+    borderColor: '#d9d9d9',
+    borderRadius: '8px',
+    color: '#000000',
+    marginBottom: '24px',
+  },
+  titleStyle: {
+    color: '#000000',
+    marginBottom: '8px',
+    textAlign: 'center',
+  },
+  descriptionStyle: {
+    color: '#666666',
+    textAlign: 'center',
+    marginBottom: '32px',
+  },
+  labelStyle: {
+    color: '#000000',
+    fontWeight: '500',
+    fontSize: '16px',
+  },
+};
+
 const Login = ({ onLoginSuccess, onShowRegister }) => {
   const [form] = Form.useForm();
   const [forgotPasswordModalVisible, setForgotPasswordModalVisible] = useState(false);
@@ -16,75 +93,6 @@ const Login = ({ onLoginSuccess, onShowRegister }) => {
   const [resetForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  // Styles réutilisables
-  const styles = {
-    primaryColor: '#c8102e', // Rouge principal
-    secondaryColor: '#991b1b', // Rouge sombre pour labels et survols
-    containerStyle: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      background: '#1f1f1f', // Gris sombre pour le conteneur
-      padding: '24px',
-    },
-    cardStyle: {
-      width: '100%',
-      maxWidth: '400px',
-      borderRadius: '12px',
-      background: '#2d2d2d', // Gris sombre pour la carte
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-      padding: '24px',
-    },
-    modalStyle: {
-      borderRadius: '12px',
-      background: '#2d2d2d', // Gris sombre pour les modals
-      padding: '24px',
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-    },
-    inputStyle: {
-      borderRadius: '8px',
-      borderColor: '#c8102e',
-      background: '#333333', // Fond légèrement plus clair pour les champs
-      color: '#ffffff',
-      fontSize: '16px',
-      padding: '12px',
-    },
-    buttonStyle: {
-      background: '#c8102e',
-      color: '#ffffff',
-      borderRadius: '8px',
-      fontSize: '16px',
-      fontWeight: '500',
-      border: 'none',
-      width: '100%',
-      height: '48px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    linkStyle: {
-      color: '#c8102e',
-      fontSize: '14px',
-    },
-    linkHoverStyle: {
-      color: '#991b1b',
-    },
-    alertStyle: {
-      background: '#333333', // Fond légèrement plus clair pour l'alert
-      borderColor: '#c8102e',
-      borderRadius: '8px',
-      color: '#ffffff',
-      marginBottom: '24px',
-    },
-    titleStyle: {
-      color: '#ffffff',
-      marginBottom: '24px',
-      textAlign: 'center',
-    },
-  };
-
-  // Gestion de l'URL pour la réinitialisation
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
@@ -109,7 +117,10 @@ const Login = ({ onLoginSuccess, onShowRegister }) => {
         return;
       }
       const user = await loginUser({ email: values.email, motDePasse: trimmedPassword });
-      const authToken = btoa(`${user.email}:${trimmedPassword}`);
+      const authToken = `Basic ${btoa(`${values.email}:${trimmedPassword}`)}`;
+      console.log('DEBUG: Login - authToken:', authToken);
+      localStorage.setItem('authToken', authToken); // Persist authToken
+      localStorage.setItem('currentUser', JSON.stringify({ ...user, authToken }));
       onLoginSuccess({ ...user, authToken });
       notification.success({
         message: 'Succès',
@@ -192,203 +203,72 @@ const Login = ({ onLoginSuccess, onShowRegister }) => {
     <div style={styles.containerStyle}>
       <Spin spinning={loading}>
         <Card style={styles.cardStyle}>
-          <Title level={3} style={styles.titleStyle}>
-            Connexion
-          </Title>
-          <Form
-            form={form}
-            name="login"
-            onFinish={handleLogin}
-            layout="vertical"
-            initialValues={{ remember: true }}
-            requiredMark={false}
-          >
-            <Form.Item
-              name="email"
-              label={<Text style={{ color: styles.secondaryColor, fontWeight: '500', fontSize: '16px' }}>Adresse Email</Text>}
-              rules={[
-                { required: true, message: 'Veuillez entrer votre email!' },
-                { type: 'email', message: 'Veuillez entrer un email valide!' },
-              ]}
-            >
-              <Input
-                prefix={<MailOutlined style={{ color: styles.primaryColor }} />}
-                placeholder="Entrez votre email (ex. exemple@esprit.tn)"
-                size="large"
-                style={styles.inputStyle}
-                aria-label="Adresse email"
-                aria-describedby="email-error"
-              />
+          <Title level={3} style={styles.titleStyle}>Bienvenue !</Title>
+          <Text style={styles.descriptionStyle}>Connectez-vous à votre compte pour gérer les évaluations.</Text>
+          <Form form={form} name="login" onFinish={handleLogin} layout="vertical" initialValues={{ remember: true }} requiredMark={false}>
+            <Form.Item name="email" label={<Text style={styles.labelStyle}>Adresse Email</Text>} rules={[{ required: true, message: 'Veuillez entrer votre email!' }, { type: 'email', message: 'Veuillez entrer un email valide!' }]}>
+              <Input prefix={<MailOutlined style={{ color: styles.primaryColor }} />} placeholder="Entrez votre email (ex. exemple@esprit.tn)" size="large" style={styles.inputStyle} aria-label="Adresse email" aria-describedby="email-error" />
             </Form.Item>
-            <Form.Item
-              name="motDePasse"
-              label={<Text style={{ color: styles.secondaryColor, fontWeight: '500', fontSize: '16px' }}>Mot de Passe</Text>}
-              rules={[{ required: true, message: 'Veuillez entrer votre mot de passe!' }]}
-            >
-              <Input.Password
-                prefix={<LockOutlined style={{ color: styles.primaryColor }} />}
-                placeholder="Entrez votre mot de passe"
-                size="large"
-                style={styles.inputStyle}
-                aria-label="Mot de passe"
-                aria-describedby="password-error"
-              />
+            <Form.Item name="motDePasse" label={<Text style={styles.labelStyle}>Mot de Passe</Text>} rules={[{ required: true, message: 'Veuillez entrer votre mot de passe!' }]}>
+              <Input.Password prefix={<LockOutlined style={{ color: styles.primaryColor }} />} placeholder="Entrez votre mot de passe" size="large" style={styles.inputStyle} aria-label="Mot de passe" aria-describedby="password-error" />
             </Form.Item>
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                style={styles.buttonStyle}
-                aria-label="Se connecter"
-              >
-                Se Connecter
-              </Button>
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Button type="primary" htmlType="submit" size="large" style={styles.buttonStyle} aria-label="Se connecter">Se Connecter</Button>
               <div style={{ textAlign: 'right', marginTop: '12px' }}>
-                <a
-                  onClick={() => setForgotPasswordModalVisible(true)}
-                  style={styles.linkStyle}
-                  onMouseEnter={(e) => (e.target.style.color = styles.linkHoverStyle.color)}
-                  onMouseLeave={(e) => (e.target.style.color = styles.linkStyle.color)}
-                >
-                  Mot de passe oublié ?
-                </a>
+                <a onClick={() => setForgotPasswordModalVisible(true)} style={styles.linkStyle}>Mot de passe oublié ?</a>
               </div>
             </Form.Item>
             {onShowRegister && (
               <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                <a
-                  onClick={onShowRegister}
-                  style={styles.linkStyle}
-                  onMouseEnter={(e) => (e.target.style.color = styles.linkHoverStyle.color)}
-                  onMouseLeave={(e) => (e.target.style.color = styles.linkStyle.color)}
-                >
-                  Pas de compte ? Inscrivez-vous
-                </a>
+                <Text style={{ color: styles.descriptionStyle.color }}>Pas de compte ?{' '}
+                  <a onClick={onShowRegister} style={styles.linkStyle}>Inscrivez-vous</a>
+                </Text>
               </div>
             )}
           </Form>
         </Card>
         <Modal
-          title={
-            <Title level={4} style={{ color: '#ffffff', margin: 0, textAlign: 'center' }}>
-              Réinitialiser le mot de passe
-            </Title>
-          }
-          open={forgotPasswordModalVisible}
-          onCancel={() => {
-            setForgotPasswordModalVisible(false);
-            setForgotPasswordEmail('');
-          }}
-          footer={null}
-          destroyOnClose
+          title="Mot de passe oublié"
+          visible={forgotPasswordModalVisible}
+          onCancel={() => setForgotPasswordModalVisible(false)}
+          footer={[
+            <Button key="cancel" onClick={() => setForgotPasswordModalVisible(false)}>Annuler</Button>,
+            <Button key="submit" type="primary" loading={loading} onClick={handleForgotPassword}>Envoyer</Button>,
+          ]}
           style={styles.modalStyle}
         >
-          <Form layout="vertical" onFinish={handleForgotPassword}>
-            <Form.Item
-              label={<Text style={{ color: styles.secondaryColor, fontWeight: '500', fontSize: '16px' }}>Adresse email</Text>}
-              name="email"
-              rules={[
-                { required: true, message: 'Veuillez entrer votre email!' },
-                { type: 'email', message: 'Veuillez entrer un email valide' },
-              ]}
-            >
-              <Input
-                prefix={<MailOutlined style={{ color: styles.primaryColor }} />}
-                value={forgotPasswordEmail}
-                onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                placeholder="Entrez votre email enregistré"
-                size="large"
-                style={styles.inputStyle}
-                aria-label="Adresse email pour réinitialisation"
-                aria-describedby="forgot-password-email-error"
-              />
-            </Form.Item>
-            <Alert
-              message="Vous recevrez un email avec des instructions pour réinitialiser votre mot de passe."
-              type="info"
-              showIcon
-              style={styles.alertStyle}
-            />
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                style={styles.buttonStyle}
-                aria-label="Envoyer le lien de réinitialisation"
-              >
-                Envoyer le lien de réinitialisation
-              </Button>
-            </Form.Item>
-          </Form>
+          <Input
+            placeholder="Entrez votre email"
+            value={forgotPasswordEmail}
+            onChange={(e) => setForgotPasswordEmail(e.target.value)}
+            style={styles.inputStyle}
+          />
         </Modal>
         <Modal
-          title={
-            <Title level={4} style={{ color: '#ffffff', margin: 0, textAlign: 'center' }}>
-              Réinitialiser le mot de passe
-            </Title>
-          }
-          open={resetPasswordModalVisible}
+          title="Réinitialiser le mot de passe"
+          visible={resetPasswordModalVisible}
           onCancel={() => setResetPasswordModalVisible(false)}
           footer={null}
-          destroyOnClose
           style={styles.modalStyle}
         >
-          <Form
-            form={resetForm}
-            layout="vertical"
-            onFinish={handleResetPassword}
-          >
+          <Form form={resetForm} onFinish={handleResetPassword} layout="vertical">
             <Form.Item
-              label={<Text style={{ color: styles.secondaryColor, fontWeight: '500', fontSize: '16px' }}>Nouveau mot de passe</Text>}
               name="newPassword"
-              rules={[
-                { required: true, message: 'Veuillez entrer un nouveau mot de passe!' },
-                { min: 6, message: 'Le mot de passe doit contenir au moins 6 caractères!' },
-              ]}
+              label="Nouveau mot de passe"
+              rules={[{ required: true, message: 'Veuillez entrer votre nouveau mot de passe!' }]}
             >
-              <Input.Password
-                prefix={<LockOutlined style={{ color: styles.primaryColor }} />}
-                placeholder="Entrez votre nouveau mot de passe"
-                size="large"
-                style={styles.inputStyle}
-                aria-label="Nouveau mot de passe"
-                aria-describedby="new-password-error"
-              />
+              <Input.Password style={styles.inputStyle} />
             </Form.Item>
             <Form.Item
-              label={<Text style={{ color: styles.secondaryColor, fontWeight: '500', fontSize: '16px' }}>Confirmer le nouveau mot de passe</Text>}
               name="confirmPassword"
-              dependencies={['newPassword']}
-              rules={[
-                { required: true, message: 'Veuillez confirmer votre nouveau mot de passe!' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('newPassword') === value) return Promise.resolve();
-                    return Promise.reject(new Error('Les mots de passe ne correspondent pas!'));
-                  },
-                }),
-              ]}
+              label="Confirmer le mot de passe"
+              rules={[{ required: true, message: 'Veuillez confirmer votre mot de passe!' }]}
             >
-              <Input.Password
-                prefix={<LockOutlined style={{ color: styles.primaryColor }} />}
-                placeholder="Confirmez votre nouveau mot de passe"
-                size="large"
-                style={styles.inputStyle}
-                aria-label="Confirmer le nouveau mot de passe"
-                aria-describedby="confirm-password-error"
-              />
+              <Input.Password style={styles.inputStyle} />
             </Form.Item>
             <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                style={styles.buttonStyle}
-                aria-label="Réinitialiser le mot de passe"
-              >
-                Réinitialiser le mot de passe
+              <Button type="primary" htmlType="submit" loading={loading} style={styles.buttonStyle}>
+                Réinitialiser
               </Button>
             </Form.Item>
           </Form>

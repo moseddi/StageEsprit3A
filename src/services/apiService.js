@@ -1,53 +1,54 @@
-// src/services/apiService.js
-const API_URL = 'http://localhost:8081/api'; // Vérifiez que cette URL correspond bien à votre backend
+const API_URL = 'http://localhost:8081/api';
 
 const apiFetch = async (url, options = {}) => {
-    // Si options.authToken est fourni, il devrait être au format "email:password" non encodé en base64.
-    // Cette fonction l'encodera en base64 et l'ajoutera à l'en-tête Authorization.
-    const authTokenHeader = options.authToken ? `Basic ${btoa(options.authToken)}` : '';
-
+    const authTokenHeader = options.authToken || '';
     try {
+        if (authTokenHeader && !authTokenHeader.startsWith('Basic ')) {
+            console.error('DEBUG: apiFetch - Invalid authToken:', authTokenHeader);
+            throw new Error('En-tête Authorization invalide : préfixe Basic manquant');
+        }
+        console.log('DEBUG: apiFetch - URL:', url, 'authToken:', authTokenHeader);
         const response = await fetch(url, {
-            ...options, // Permet de passer d'autres options fetch (method, cache, etc.)
+            ...options,
             headers: {
                 'Content-Type': 'application/json',
-                ...(authTokenHeader && { 'Authorization': authTokenHeader }), // Ajoute l'en-tête si authToken est présent
-                ...options.headers, // Permet de fusionner avec des en-têtes personnalisés
+                ...(authTokenHeader && { 'Authorization': authTokenHeader }),
+                ...options.headers,
             },
-            body: options.body ? JSON.stringify(options.body) : null, // Convertit le corps en JSON si présent
+            body: options.body ? JSON.stringify(options.body) : null,
         });
-
         if (!response.ok) {
-            // Tente de lire le message d'erreur du backend pour un meilleur diagnostic
             let errorDetail = 'Aucune information d\'erreur.';
             try {
-                const errorJson = await response.json();
-                if (errorJson.message) {
-                    errorDetail = errorJson.message;
-                } else if (errorJson.error) {
-                    errorDetail = errorJson.error;
+                const contentType = response.headers.get('Content-Type') || '';
+                if (contentType.includes('application/json')) {
+                    const errorJson = await response.json();
+                    if (errorJson.message) {
+                        errorDetail = errorJson.message;
+                    } else if (errorJson.error) {
+                        errorDetail = errorJson.error;
+                    } else {
+                        errorDetail = JSON.stringify(errorJson);
+                    }
                 } else {
-                    errorDetail = JSON.stringify(errorJson);
+                    errorDetail = await response.text() || 'Réponse d\'erreur illisible.';
                 }
             } catch (jsonError) {
-                // Si la réponse n'est pas un JSON, tente de lire le texte brut
+                console.error('DEBUG: apiFetch - Error parsing response:', jsonError);
                 errorDetail = await response.text().catch(() => 'Réponse d\'erreur illisible.');
             }
             const errorMessage = `Erreur ${response.status}: ${errorDetail}`;
             const error = new Error(errorMessage);
-            error.response = response; // Attache la réponse complète à l'erreur pour un débogage avancé
+            error.response = response;
             throw error;
         }
-
-        // Gère les réponses sans contenu (ex: 204 No Content)
         if (response.status === 204 || response.headers.get('Content-Length') === '0') {
             return null;
         }
-
         return await response.json();
     } catch (error) {
         console.error("Erreur apiFetch:", error);
-        throw error; // Re-jette l'erreur pour qu'elle soit gérée par l'appelant
+        throw error;
     }
 };
 
@@ -56,26 +57,18 @@ export const fetchUtilisateurs = (authToken) => apiFetch(`${API_URL}/users`, { a
 export const createUser = (userData, authToken) => apiFetch(`${API_URL}/users`, { method: 'POST', body: userData, authToken });
 export const updateUser = (id, userData, authToken) => apiFetch(`${API_URL}/users/${id}`, { method: 'PUT', body: userData, authToken });
 export const deleteUser = (id, authToken) => apiFetch(`${API_URL}/users/${id}`, { method: 'DELETE', authToken });
-
-// Correction ici : `credentials` doit contenir `email` et `motDePasse`
 export const loginUser = (credentials) => apiFetch(`${API_URL}/users/login`, { method: 'POST', body: credentials });
-
 export const requestForgotPassword = (email) => apiFetch(`${API_URL}/users/forgot-password`, { method: 'POST', body: { email } });
 export const resetPassword = (data) => apiFetch(`${API_URL}/users/reinitialiser-mot-de-passe`, { method: 'POST', body: data });
 export const updateCurrentUser = (userData, authToken) => apiFetch(`${API_URL}/users/me`, { method: 'PUT', body: userData, authToken });
-
-// NOUVELLE FONCTION : Vérifie si un email existe déjà dans le système
 export const checkEmailExists = async (email) => {
     try {
-        // L'endpoint backend que nous avons défini retourne directement true ou false
         const exists = await apiFetch(`${API_URL}/users/exists-by-email?email=${encodeURIComponent(email)}`);
-        return exists; // Retourne true ou false
+        return exists;
     } catch (error) {
-        // Si la vérification échoue (ex: erreur réseau), renvoie l'erreur
         throw error;
     }
 };
-
 
 // Fonctions Classes
 export const fetchClasses = (authToken) => apiFetch(`${API_URL}/classes`, { authToken });
@@ -94,7 +87,8 @@ export const fetchFormulaires = (page = 0, size = 10, authToken) => apiFetch(`${
 export const createFormulaire = (formData, authToken) => apiFetch(`${API_URL}/formulaires`, { method: 'POST', body: formData, authToken });
 export const updateFormulaire = (id, formData, authToken) => apiFetch(`${API_URL}/formulaires/${id}`, { method: 'PUT', body: formData, authToken });
 export const deleteFormulaire = (id, authToken) => apiFetch(`${API_URL}/formulaires/${id}`, { method: 'DELETE', authToken });
-export const fetchEvaluatorFormulaires = (evaluatorId, authToken) => apiFetch(`${API_URL}/formulaires/evaluator/${evaluatorId}`, { authToken });
+export const fetchEVALUATEURFormulaires = (EVALUATEURId, authToken) =>
+    apiFetch(`${API_URL}/formulaires/evaluator/${EVALUATEURId}`, { authToken });
 
 // Fonctions Questions
 export const fetchQuestions = (formulaireId, authToken) => apiFetch(`${API_URL}/questions?id_formulaire=${formulaireId}`, { authToken });
@@ -104,6 +98,46 @@ export const deleteQuestion = (id, authToken) => apiFetch(`${API_URL}/questions/
 
 // Fonctions Liens d'évaluation
 export const generateEvaluationLink = (formulaireId, authToken) => apiFetch(`${API_URL}/lien-evaluation`, { method: 'POST', body: { id_formulaire: formulaireId, expiration: null }, authToken });
+export const getFormulaireByToken = async (token) => {
+    const response = await fetch(`/api/evaluation/formulaire?token=${token}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    if (!response.ok) {
+        throw new Error('Erreur lors de la récupération du formulaire');
+    }
+    return response.json();
+};
 
-// Soumission d'évaluation (si cette route existe sur votre backend)
-export const submitEvaluation = (formulaireId, answers, authToken) => apiFetch('/api/evaluation/submit', { method: 'POST', body: { formulaireId, answers }, authToken });
+export const submitEvaluation = async (formId, answers, token, userId) => {
+    const response = await fetch(`/api/evaluation/submit?formId=${formId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Evaluation-Token': token,
+            'X-User-Id': userId
+        },
+        body: JSON.stringify(answers),
+    });
+    if (!response.ok) {
+        const errorData = await response.text();
+        throw new Error('Erreur soumission : ' + errorData);
+    }
+    return response.json();
+};
+
+export const fetchEvaluationLink = async (userId) => {
+    const response = await fetch(`${API_URL}/evaluation/user-link`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-User-Id': userId
+        }
+    });
+    if (!response.ok) {
+        throw new Error('Erreur récupération lien');
+    }
+    return await response.text();
+};

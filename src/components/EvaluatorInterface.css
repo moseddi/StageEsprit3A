@@ -1,76 +1,46 @@
 .evaluator-interface-container {
-    padding: 20px;
-    background: #fff0f5;
+    padding: 24px;
+    background-color: #f0f2f5;
+    min-height: 100vh;
 }
 
-.notification-button {
-    background: #ff69b4 !important;
-    color: #fff !important;
-    border-radius: 8px !important;
-    border: none !important;
-    transition: all 0.3s ease !important;
+.evaluator-interface-container h2 {
+    margin-bottom: 24px;
+    font-weight: 600;
+    color: #2c3e50;
 }
 
-.notification-button:hover {
-    background: #c8102e !important;
+.notification-area {
+    margin-bottom: 24px;
+    text-align: center;
 }
 
-.notification-modal .ant-modal-content,
-.submission-modal .ant-modal-content {
-    background: #fff0f5 !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.2) !important;
+.notification-area .ant-badge .ant-btn {
+    background-color: #fff;
+    border-color: #d9d9d9;
+    color: rgba(0, 0, 0, 0.85);
+    transition: all 0.3s;
 }
 
-.modal-title {
-    color: #ff69b4;
-    font-size: 20px;
-    font-weight: bold;
+.notification-area .ant-badge .ant-btn:hover {
+    border-color: #40a9ff;
+    color: #40a9ff;
 }
 
-.form-table {
-    background: #fff0f5 !important;
-    border-radius: 12px !important;
+.submission-modal .ant-modal-header {
+    border-bottom: 1px solid #f0f0f0;
 }
 
-.action-button {
-    background: #ff69b4 !important;
-    border-color: #ff69b4 !important;
-    transition: all 0.3s ease !important;
+.submission-modal .ant-modal-title {
+    color: #333;
 }
 
-.action-button:hover {
-    background: #c8102e !important;
-    border-color: #c8102e !important;
-}
-
-.question-label {
-    color: #c8102e;
+.submission-modal .ant-card-head-title {
+    font-size: 16px;
     font-weight: 500;
+    color: #555;
 }
 
-.question-textarea {
-    border-radius: 8px !important;
-    border-color: #ff69b4 !important;
-    transition: all 0.3s ease !important;
-}
-
-.question-textarea:hover,
-.question-textarea:focus {
-    border-color: #c8102e !important;
-    box-shadow: 0 0 0 2px rgba(200, 16, 46, 0.2) !important;
-}
-
-.submit-button {
-    background: #ff69b4 !important;
-    color: #fff !important;
-    border-radius: 8px !important;
-    padding: 8px 20px !important;
-    font-size: 16px !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-}
-
-.submit-button:hover {
-    background: #c8102e !important;
+.submission-modal .ant-card-body {
+    padding: 16px;
 }

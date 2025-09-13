@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Tabs, Button, notification, Tooltip, Space } from 'antd';
 import {
@@ -35,7 +34,6 @@ const App = ({ setUserName, onLogout }) => {
       minHeight: '100vh',
       background: theme === 'light' ? '#ffffff' : '#1f1f1f',
       fontFamily: "'Roboto', sans-serif",
-      transition: 'all 0.3s ease',
     },
     header: {
       background: '#c8102e',
@@ -46,31 +44,44 @@ const App = ({ setUserName, onLogout }) => {
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
     },
     headerTitle: {
-      color: '#c8102e', // Rouge pour "Bienvenue, {nom}"
+      color: '#c8102e', // Changé en rouge principal
       fontFamily: "'Roboto', sans-serif",
       fontWeight: 700,
       fontSize: '1.75rem',
       padding: '0.5rem 1rem',
       borderRadius: '10px',
     },
+    headerBio: {
+      color: '#888888', // Changé en gris
+      fontFamily: "'Roboto', sans-serif",
+      fontSize: '1rem',
+      padding: '0 1rem',
+      maxWidth: '500px',
+      wordBreak: 'break-word',
+    },
+    headerAvatar: {
+      width: '60px',
+      height: '60px',
+      borderRadius: '50%',
+      objectFit: 'cover',
+      border: `2px solid ${theme === 'light' ? '#c8102e' : '#991b1b'}`,
+      margin: '0.5rem 1rem',
+    },
     contentContainer: {
       padding: '1.5rem',
       background: theme === 'light' ? '#ffffff' : '#1f1f1f',
       minHeight: 'calc(100vh - 180px)',
-      transition: 'all 0.3s ease',
     },
     adminDashboardContainer: {
       padding: '1.5rem',
       background: theme === 'light' ? '#ffffff' : '#1f1f1f',
       minHeight: 'calc(100vh - 180px)',
-      transition: 'all 0.3s ease',
     },
     authCard: {
       borderRadius: '20px',
       background: theme === 'light' ? '#ffffff' : '#2d2d2d',
       boxShadow: '0 8px 16px rgba(0, 0, 0, 0.3)',
       padding: '2rem',
-      animation: 'float 4s ease-in-out infinite',
     },
     adminHeader: {
       borderRadius: '20px',
@@ -98,7 +109,6 @@ const App = ({ setUserName, onLogout }) => {
       padding: '8px 20px',
       fontSize: '16px',
       fontWeight: 500,
-      transition: 'all 0.3s ease',
     },
     iconButtonStyle: {
       background: '#c8102e',
@@ -109,7 +119,6 @@ const App = ({ setUserName, onLogout }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      transition: 'transform 0.3s ease, background 0.3s ease',
       border: 'none',
     },
   };
@@ -185,149 +194,161 @@ const App = ({ setUserName, onLogout }) => {
   };
 
   return (
-    <div style={styles.layoutContainer}>
-      {currentUser ? (
-        <div style={styles.adminDashboardContainer}>
-          <Card style={styles.adminHeader}>
-            <Row align="middle" justify="space-between">
-              <Col>
-                <span style={styles.headerTitle}>Bienvenue, {currentUser.nom} !</span>
-              </Col>
-              <Col>
-                <Space>
-                  <Tooltip title={theme === 'light' ? 'Passer au mode sombre' : 'Passer au mode clair'}>
-                    <Button
-                      onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-                      style={styles.iconButtonStyle}
-                    >
-                      {theme === 'light' ? <MoonOutlined style={{ fontSize: '20px' }} /> : <SunOutlined style={{ fontSize: '20px' }} />}
-                    </Button>
-                  </Tooltip>
-                  <Tooltip title="Se déconnecter">
-                    <Button
-                      icon={<LogoutOutlined />}
-                      onClick={handleLogout}
-                      style={styles.buttonStyle}
-                      aria-label="Se déconnecter"
-                    >
-                      Déconnexion
-                    </Button>
-                  </Tooltip>
-                </Space>
-              </Col>
-            </Row>
-          </Card>
-          <Tabs
-            activeKey={activeManagementTab}
-            onChange={setActiveManagementTab}
-            size="large"
-            tabPosition="left"
-            style={{ borderRadius: '15px' }}
-            tabBarStyle={styles.tabBarStyle}
-          >
-            <TabPane
-              tab={
-                <span style={styles.tabText}>
-                  <ProfileOutlined /> Mon Profil
-                </span>
-              }
-              key="profil"
-            >
-              <UserProfile currentUser={currentUser} onUserUpdate={handleUserUpdate} theme={theme} />
-            </TabPane>
-            {currentUser?.role === 'ADMIN' && (
-              <TabPane
-                tab={
-                  <span style={styles.tabText}>
-                    <UserOutlined /> Utilisateurs
-                  </span>
-                }
-                key="utilisateurs"
-              >
-                <UserManagement currentUser={currentUser} theme={theme} />
-              </TabPane>
-            )}
-            {currentUser?.role === 'ADMIN' && (
-              <TabPane
-                tab={
-                  <span style={styles.tabText}>
-                    <TeamOutlined /> Classes
-                  </span>
-                }
-                key="classes"
-              >
-                <ClassManagement currentUser={currentUser} theme={theme} />
-              </TabPane>
-            )}
-            {currentUser?.role === 'ADMIN' && (
-              <TabPane
-                tab={
-                  <span style={styles.tabText}>
-                    <BookOutlined /> Étudiants
-                  </span>
-                }
-                key="etudiants"
-              >
-                <StudentManagement currentUser={currentUser} theme={theme} />
-              </TabPane>
-            )}
-            <TabPane
-              tab={
-                <span style={styles.tabText}>
-                  <FormOutlined /> Formulaires
-                </span>
-              }
-              key="formulaires"
-            >
-              <FormManagement currentUser={currentUser} theme={theme} />
-            </TabPane>
-          </Tabs>
-        </div>
-      ) : (
-        <div style={styles.contentContainer}>
-          <Row justify="center" align="middle">
-            <Col xs={22} sm={18} md={14} lg={10}>
-              <Card style={styles.authCard}>
-                <Tabs
-                  activeKey={activeAuthTab}
-                  onChange={setActiveAuthTab}
-                  centered
+      <div style={styles.layoutContainer}>
+        {currentUser ? (
+            <div style={styles.adminDashboardContainer}>
+              <Card style={styles.adminHeader}>
+                <Row align="middle" justify="space-between">
+                  <Col>
+                    {currentUser.avatar ? (
+                        <img
+                            src={currentUser.avatar}
+                            alt="Avatar de l'utilisateur"
+                            style={styles.headerAvatar}
+                        />
+                    ) : (
+                        <UserOutlined style={{ ...styles.headerAvatar, fontSize: '60px', color: styles.primaryColor }} />
+                    )}
+                    <span style={styles.headerTitle}>Bienvenue, {currentUser.nom} !</span>
+                    {currentUser.bio && (
+                        <div style={styles.headerBio}>{currentUser.bio}</div>
+                    )}
+                  </Col>
+                  <Col>
+                    <Space>
+                      <Tooltip title={theme === 'light' ? 'Passer au mode sombre' : 'Passer au mode clair'}>
+                        <Button
+                            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+                            style={styles.iconButtonStyle}
+                        >
+                          {theme === 'light' ? <MoonOutlined style={{ fontSize: '20px' }} /> : <SunOutlined style={{ fontSize: '20px' }} />}
+                        </Button>
+                      </Tooltip>
+                      <Tooltip title="Se déconnecter">
+                        <Button
+                            icon={<LogoutOutlined />}
+                            onClick={handleLogout}
+                            style={styles.buttonStyle}
+                            aria-label="Se déconnecter"
+                        >
+                          Déconnexion
+                        </Button>
+                      </Tooltip>
+                    </Space>
+                  </Col>
+                </Row>
+              </Card>
+              <Tabs
+                  activeKey={activeManagementTab}
+                  onChange={setActiveManagementTab}
+                  size="large"
+                  tabPosition="left"
                   style={{ borderRadius: '15px' }}
                   tabBarStyle={styles.tabBarStyle}
-                >
-                  <TabPane
+              >
+                <TabPane
                     tab={
-                      <span style={{ ...styles.tabText, fontSize: '18px' }}>
+                      <span style={styles.tabText}>
+                  <ProfileOutlined /> Mon Profil
+                </span>
+                    }
+                    key="profil"
+                >
+                  <UserProfile currentUser={currentUser} onUserUpdate={handleUserUpdate} theme={theme} />
+                </TabPane>
+                {currentUser?.role === 'ADMIN' && (
+                    <TabPane
+                        tab={
+                          <span style={styles.tabText}>
+                    <UserOutlined /> Utilisateurs
+                  </span>
+                        }
+                        key="utilisateurs"
+                    >
+                      <UserManagement currentUser={currentUser} theme={theme} />
+                    </TabPane>
+                )}
+                {currentUser?.role === 'ADMIN' && (
+                    <TabPane
+                        tab={
+                          <span style={styles.tabText}>
+                    <TeamOutlined /> Classes
+                  </span>
+                        }
+                        key="classes"
+                    >
+                      <ClassManagement currentUser={currentUser} theme={theme} />
+                    </TabPane>
+                )}
+                {currentUser?.role === 'ADMIN' && (
+                    <TabPane
+                        tab={
+                          <span style={styles.tabText}>
+                    <BookOutlined /> Étudiants
+                  </span>
+                        }
+                        key="etudiants"
+                    >
+                      <StudentManagement currentUser={currentUser} theme={theme} />
+                    </TabPane>
+                )}
+                <TabPane
+                    tab={
+                      <span style={styles.tabText}>
+                  <FormOutlined /> Formulaires
+                </span>
+                    }
+                    key="formulaires"
+                >
+                  <FormManagement currentUser={currentUser} theme={theme} />
+                </TabPane>
+              </Tabs>
+            </div>
+        ) : (
+            <div style={styles.contentContainer}>
+              <Row justify="center" align="middle">
+                <Col xs={22} sm={18} md={14} lg={10}>
+                  <Card style={styles.authCard}>
+                    <Tabs
+                        activeKey={activeAuthTab}
+                        onChange={setActiveAuthTab}
+                        centered
+                        style={{ borderRadius: '15px' }}
+                        tabBarStyle={styles.tabBarStyle}
+                    >
+                      <TabPane
+                          tab={
+                            <span style={{ ...styles.tabText, fontSize: '18px' }}>
                         Connexion
                       </span>
-                    }
-                    key="login"
-                  >
-                    <Login
-                      onLoginSuccess={handleLoginSuccess}
-                      onShowRegister={() => setActiveAuthTab('register')}
-                    />
-                  </TabPane>
-                  <TabPane
-                    tab={
-                      <span style={{ ...styles.tabText, fontSize: '18px' }}>
+                          }
+                          key="login"
+                      >
+                        <Login
+                            onLoginSuccess={handleLoginSuccess}
+                            onShowRegister={() => setActiveAuthTab('register')}
+                        />
+                      </TabPane>
+                      <TabPane
+                          tab={
+                            <span style={{ ...styles.tabText, fontSize: '18px' }}>
                         Inscription
                       </span>
-                    }
-                    key="register"
-                  >
-                    <Register
-                      onRegisterSuccess={handleRegisterSuccess}
-                      onShowLogin={() => setActiveAuthTab('login')}
-                    />
-                  </TabPane>
-                </Tabs>
-              </Card>
-            </Col>
-          </Row>
-        </div>
-      )}
-    </div>
+                          }
+                          key="register"
+                      >
+                        <Register
+                            onRegisterSuccess={handleRegisterSuccess}
+                            onShowLogin={() => setActiveAuthTab('login')}
+                        />
+                      </TabPane>
+                    </Tabs>
+                  </Card>
+                </Col>
+              </Row>
+            </div>
+        )}
+      </div>
   );
 };
 
