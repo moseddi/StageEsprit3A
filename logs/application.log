@@ -1,0 +1,175 @@
+2025-08-05T20:08:52.953+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Starting SujetStage3AApplication using Java 21.0.5 with PID 14964 (C:\Users\Amal\Desktop\Stage\SujetStage3A\target\classes started by Amal in C:\Users\Amal\Desktop\Stage\SujetStage3A)
+2025-08-05T20:08:52.954+01:00 DEBUG 14964 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Running with Spring Boot v3.5.3, Spring v6.2.8
+2025-08-05T20:08:52.955+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-08-05T20:08:53.728+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-05T20:08:53.831+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 89 ms. Found 8 JPA repository interfaces.
+2025-08-05T20:08:54.495+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-08-05T20:08:54.502+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-05T20:08:54.502+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-05T20:08:54.581+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-05T20:08:54.581+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1620 ms
+2025-08-05T20:08:54.781+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-08-05T20:08:55.057+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@103df505
+2025-08-05T20:08:55.072+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-08-05T20:08:55.077+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-05T20:08:55.090+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-05T20:08:55.134+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-05T20:08:55.169+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-05T20:08:55.898+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-05T20:08:55.900+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T20:08:56.659+01:00  WARN 14964 --- [SujetStage3A] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-05T20:08:57.731+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-08-05T20:08:57.770+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-05T20:08:57.860+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-08-05T20:08:57.876+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Started SujetStage3AApplication in 5.066 seconds (process running for 169.621)
+2025-08-05T20:08:57.892+01:00  INFO 14964 --- [SujetStage3A] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-08-05T20:08:58.668+01:00  INFO 14964 --- [SujetStage3A] [http-nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-05T20:08:58.669+01:00  INFO 14964 --- [SujetStage3A] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-08-05T20:08:58.674+01:00  INFO 14964 --- [SujetStage3A] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 5 ms
+2025-08-05T20:08:58.711+01:00  WARN 14964 --- [SujetStage3A] [http-nio-8081-exec-1] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2025-08-05T20:18:46.322+01:00  INFO 14964 --- [SujetStage3A] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-05T20:18:46.334+01:00  INFO 14964 --- [SujetStage3A] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-05T20:18:46.349+01:00  INFO 14964 --- [SujetStage3A] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T20:18:46.353+01:00  INFO 14964 --- [SujetStage3A] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-08-05T20:18:46.365+01:00  INFO 14964 --- [SujetStage3A] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2025-08-05T20:28:25.374+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Starting SujetStage3AApplication using Java 21.0.5 with PID 13244 (C:\Users\Amal\Desktop\Stage\SujetStage3A\target\classes started by Amal in C:\Users\Amal\Desktop\Stage\SujetStage3A)
+2025-08-05T20:28:25.380+01:00 DEBUG 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Running with Spring Boot v3.5.3, Spring v6.2.8
+2025-08-05T20:28:25.382+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-08-05T20:28:25.613+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-08-05T20:28:25.613+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-08-05T20:28:29.485+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-05T20:28:30.293+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 767 ms. Found 8 JPA repository interfaces.
+2025-08-05T20:28:33.679+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-08-05T20:28:33.736+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-05T20:28:33.737+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-05T20:28:33.932+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-05T20:28:33.933+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 8318 ms
+2025-08-05T20:28:34.672+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-08-05T20:28:35.491+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@90f148d
+2025-08-05T20:28:35.496+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-08-05T20:28:35.647+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-05T20:28:35.894+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-08-05T20:28:36.092+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-05T20:28:37.450+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-05T20:28:37.876+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-05T20:28:42.713+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-05T20:28:42.732+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T20:28:44.646+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-08-05T20:28:45.004+01:00  WARN 13244 --- [SujetStage3A] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-05T20:28:47.302+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-08-05T20:28:47.412+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-05T20:28:48.000+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-08-05T20:28:48.027+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Started SujetStage3AApplication in 25.214 seconds (process running for 29.946)
+2025-08-05T20:30:24.705+01:00  INFO 13244 --- [SujetStage3A] [http-nio-8081-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-05T20:30:24.731+01:00  INFO 13244 --- [SujetStage3A] [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-08-05T20:30:24.784+01:00  INFO 13244 --- [SujetStage3A] [http-nio-8081-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 52 ms
+2025-08-05T20:30:26.450+01:00  WARN 13244 --- [SujetStage3A] [http-nio-8081-exec-3] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2025-08-05T20:33:36.901+01:00  INFO 13244 --- [SujetStage3A] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 1 deletion, 0 modifications)
+2025-08-05T20:33:36.915+01:00  INFO 13244 --- [SujetStage3A] [Thread-5] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-05T20:33:36.929+01:00  INFO 13244 --- [SujetStage3A] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-05T20:33:37.032+01:00  INFO 13244 --- [SujetStage3A] [Thread-5] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T20:33:37.046+01:00  INFO 13244 --- [SujetStage3A] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-08-05T20:33:37.058+01:00  INFO 13244 --- [SujetStage3A] [Thread-5] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-08-05T20:33:37.393+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Starting SujetStage3AApplication using Java 21.0.5 with PID 13244 (C:\Users\Amal\Desktop\Stage\SujetStage3A\target\classes started by Amal in C:\Users\Amal\Desktop\Stage\SujetStage3A)
+2025-08-05T20:33:37.394+01:00 DEBUG 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Running with Spring Boot v3.5.3, Spring v6.2.8
+2025-08-05T20:33:37.394+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-08-05T20:33:38.402+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-05T20:33:38.501+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 93 ms. Found 8 JPA repository interfaces.
+2025-08-05T20:33:39.079+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-08-05T20:33:39.086+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-05T20:33:39.087+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-05T20:33:39.167+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-05T20:33:39.168+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1765 ms
+2025-08-05T20:33:39.300+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2025-08-05T20:33:39.499+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@1399a452
+2025-08-05T20:33:39.500+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2025-08-05T20:33:39.508+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-05T20:33:39.523+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-05T20:33:39.568+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-05T20:33:39.611+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-05T20:33:40.146+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-05T20:33:40.147+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T20:33:40.696+01:00  WARN 13244 --- [SujetStage3A] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-05T20:33:41.792+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-08-05T20:33:41.821+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-05T20:33:41.878+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-08-05T20:33:41.889+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Started SujetStage3AApplication in 4.621 seconds (process running for 323.808)
+2025-08-05T20:33:41.895+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-08-05T20:33:44.405+01:00  INFO 13244 --- [SujetStage3A] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
+2025-08-05T20:33:44.420+01:00  INFO 13244 --- [SujetStage3A] [Thread-7] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-05T20:33:44.433+01:00  INFO 13244 --- [SujetStage3A] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-05T20:33:44.444+01:00  INFO 13244 --- [SujetStage3A] [Thread-7] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T20:33:44.446+01:00  INFO 13244 --- [SujetStage3A] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-08-05T20:33:44.462+01:00  INFO 13244 --- [SujetStage3A] [Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+2025-08-05T20:33:45.252+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Starting SujetStage3AApplication using Java 21.0.5 with PID 13244 (C:\Users\Amal\Desktop\Stage\SujetStage3A\target\classes started by Amal in C:\Users\Amal\Desktop\Stage\SujetStage3A)
+2025-08-05T20:33:45.253+01:00 DEBUG 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Running with Spring Boot v3.5.3, Spring v6.2.8
+2025-08-05T20:33:45.253+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : No active profile set, falling back to 1 default profile: "default"
+2025-08-05T20:33:46.176+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-08-05T20:33:46.275+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 94 ms. Found 8 JPA repository interfaces.
+2025-08-05T20:33:46.718+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2025-08-05T20:33:46.720+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-08-05T20:33:46.721+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-08-05T20:33:46.799+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-08-05T20:33:46.800+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1535 ms
+2025-08-05T20:33:46.926+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Starting...
+2025-08-05T20:33:47.097+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-3 - Added connection org.postgresql.jdbc.PgConnection@724d7e26
+2025-08-05T20:33:47.098+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Start completed.
+2025-08-05T20:33:47.100+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-08-05T20:33:47.109+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-08-05T20:33:47.136+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-08-05T20:33:47.167+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-3)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-08-05T20:33:47.743+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-08-05T20:33:47.747+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T20:33:48.303+01:00  WARN 13244 --- [SujetStage3A] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-08-05T20:33:49.688+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .w.s.a.s.AnnotationActionEndpointMapping : Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-08-05T20:33:49.763+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-08-05T20:33:49.902+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2025-08-05T20:33:49.912+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] o.e.s.SujetStage3AApplication            : Started SujetStage3AApplication in 4.906 seconds (process running for 331.831)
+2025-08-05T20:33:49.937+01:00  INFO 13244 --- [SujetStage3A] [restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+2025-08-05T20:37:29.641+01:00  INFO 13244 --- [SujetStage3A] [http-nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-08-05T20:37:29.649+01:00  INFO 13244 --- [SujetStage3A] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-08-05T20:37:29.670+01:00  INFO 13244 --- [SujetStage3A] [http-nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 21 ms
+2025-08-05T20:37:29.804+01:00  WARN 13244 --- [SujetStage3A] [http-nio-8081-exec-1] ration$PageModule$WarningLoggingModifier : Serializing PageImpl instances as-is is not supported, meaning that there is no guarantee about the stability of the resulting JSON structure!
+	For a stable JSON structure, please use Spring Data's PagedModel (globally via @EnableSpringDataWebSupport(pageSerializationMode = VIA_DTO))
+	or Spring HATEOAS and Spring Data's PagedResourcesAssembler as documented in https://docs.spring.io/spring-data/commons/reference/repositories/core-extensions.html#core.web.pageables.
+
+2025-08-05T20:38:39.335+01:00  INFO 13244 --- [SujetStage3A] [File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2025-08-05T20:38:39.343+01:00  INFO 13244 --- [SujetStage3A] [Thread-11] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-08-05T20:38:39.363+01:00  INFO 13244 --- [SujetStage3A] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-08-05T20:38:39.397+01:00  INFO 13244 --- [SujetStage3A] [Thread-11] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-08-05T20:38:39.402+01:00  INFO 13244 --- [SujetStage3A] [Thread-11] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown initiated...
+2025-08-05T20:38:39.419+01:00  INFO 13244 --- [SujetStage3A] [Thread-11] com.zaxxer.hikari.HikariDataSource       : HikariPool-3 - Shutdown completed.

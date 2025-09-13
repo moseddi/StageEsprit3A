@@ -19,9 +19,12 @@ public class Question {
     private Float ponderation;
 
     private Boolean statut = true;
-
     @ManyToOne
-    @JoinColumn(name = "id_formulaire")
+    @JoinColumn(name = "id_formulaire",
+            foreignKey = @ForeignKey(
+                    name = "question_id_formulaire_fkey",
+                    foreignKeyDefinition = "FOREIGN KEY (id_formulaire) REFERENCES formulaire(id) ON DELETE CASCADE ON UPDATE CASCADE"
+            ))
     private Formulaire formulaire;
 
     // Getters & Setters

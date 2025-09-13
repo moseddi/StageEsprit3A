@@ -14,6 +14,8 @@ public class UserDTO {
     private String nom;
     private String email;
     private String role;
+    private String bio;
+    private String avatar;
 
     public Integer getId() {
         return id;
@@ -46,11 +48,20 @@ public class UserDTO {
     public void setRole(String role) {
         this.role = role;
     }
-    public UserDTO(Integer id, String nom, String email, String role) {
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.role = role;
+    }
+    public UserDTO(Integer id, String nom, String email, String role,String bio,String avatar) {
         this.id = id;
         this.nom = nom;
         this.email = email;
         this.role = role;
+        this.bio = bio;
+        this.avatar = avatar;
     }
 
     // Add no-args constructor

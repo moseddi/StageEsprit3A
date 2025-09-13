@@ -1,11 +1,16 @@
 package org.example.sujetstage3a.controller;
 
 import org.example.sujetstage3a.model.Formulaire;
+import org.example.sujetstage3a.repository.FormulaireRepository;
 import org.example.sujetstage3a.service.FormulaireService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/formulaires")
@@ -13,7 +18,8 @@ import org.springframework.web.bind.annotation.*;
 public class FormulaireController {
 
     private final FormulaireService formulaireService;
-
+    @Autowired
+    private FormulaireRepository formulaireRepository;
     @Autowired
     public FormulaireController(FormulaireService formulaireService) {
         this.formulaireService = formulaireService;
@@ -44,4 +50,15 @@ public class FormulaireController {
     public void deleteFormulaire(@PathVariable Integer id) {
         formulaireService.deleteFormulaire(id);
     }
+
+    @GetMapping("/evaluator/{id}")
+    public ResponseEntity<List<Formulaire>> getFormulairesByEvaluateur(@PathVariable Integer id) {
+        try {
+            List<Formulaire> formulaires = formulaireRepository.findFormulairesByEvaluateurId(id);
+            return ResponseEntity.ok(formulaires);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
 }

@@ -1,8 +1,7 @@
 package org.example.sujetstage3a.model;
 
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "lien_evaluation")
@@ -10,28 +9,63 @@ public class LienEvaluation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
+    @Column(name = "token", nullable = false)
     private String token;
 
-    private LocalDateTime expiration;
+    @Column(name = "expiration")
+    private Timestamp expiration;
 
-    @ManyToOne
-    @JoinColumn(name = "id_formulaire")
-    private Formulaire formulaire;
+    @Column(name = "id_formulaire", nullable = false)
+    @JoinColumn(name = "id_formulaire",
+            foreignKey = @ForeignKey(
+                    name = "lien_evaluation_id_formulaire_fkey",
+                    foreignKeyDefinition = "FOREIGN KEY (id_formulaire) REFERENCES formulaire(id) ON DELETE CASCADE ON UPDATE CASCADE"
+            ))
+    private Integer idFormulaire;
 
-    // Getters and Setters
-    public Integer getId() { return id; }
+    @Column(name = "id_evaluateur")
+    private Integer idEvaluateur;
 
-    public String getToken() { return token; }
+    // Getters et Setters
+    public Long getId() {
+        return id;
+    }
 
-    public void setToken(String token) { this.token = token; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public LocalDateTime getExpiration() { return expiration; }
+    public String getToken() {
+        return token;
+    }
 
-    public void setExpiration(LocalDateTime expiration) { this.expiration = expiration; }
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-    public Formulaire getFormulaire() { return formulaire; }
+    public Timestamp getExpiration() {
+        return expiration;
+    }
 
-    public void setFormulaire(Formulaire formulaire) { this.formulaire = formulaire; }
+    public void setExpiration(Timestamp expiration) {
+        this.expiration = expiration;
+    }
+
+    public Integer getIdFormulaire() {
+        return idFormulaire;
+    }
+
+    public void setIdFormulaire(Integer idFormulaire) {
+        this.idFormulaire = idFormulaire;
+    }
+
+    public Integer getIdEvaluateur() {
+        return idEvaluateur;
+    }
+
+    public void setIdEvaluateur(Integer idEvaluateur) {
+        this.idEvaluateur = idEvaluateur;
+    }
 }

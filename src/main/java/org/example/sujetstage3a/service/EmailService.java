@@ -6,30 +6,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class EmailService {
 
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendEvaluationLink(String recipientEmail, String token, String formulaireTitre) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+    public void sendEvaluationLink(String recipientEmail, String evaluationLink, String formTitle) throws MessagingException {
+        try {
+            logger.info("Preparing to send email to {} with link {} and title {}", recipientEmail, evaluationLink, formTitle);
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        String link = "http://localhost:3000/evaluation?token=" + token; // Adjust URL based on your frontend
-        String subject = "Lien d'évaluation pour le formulaire: " + formulaireTitre;
-        String htmlContent = "<h3>Bonjour,</h3>" +
-                "<p>Vous êtes invité à compléter le formulaire d'évaluation suivant : <strong>" + formulaireTitre + "</strong>.</p>" +
-                "<p>Cliquez sur le lien ci-dessous pour accéder au formulaire :</p>" +
-                "<a href='" + link + "' style='color: #ff69b4; text-decoration: none;'>Accéder au Formulaire</a>" +
-                "<p>Ce lien est valable jusqu'à son expiration. Merci de répondre dans les délais.</p>" +
-                "<p>Cordialement,<br>L'équipe pédagogique</p>";
+            helper.setTo(recipientEmail);
+            helper.setSubject("Lien d'évaluation : " + formTitle);
+            helper.setText(
+                    "<h3>Bonjour,</h3>" +
+                            "<p>Vous êtes invité à compléter le formulaire <b>" + formTitle + "</b>.</p>" +
+                            "<p>Cliquez ici :</p>" +
+                            "<a href=\"" + evaluationLink + "\">Accéder au formulaire</a>" +
+                            "<p>Cordialement,</p>",
+                    true
+            );
 
-        helper.setTo(recipientEmail);
-        helper.setSubject(subject);
-        helper.setText(htmlContent, true);
-
-        mailSender.send(mimeMessage);
+            mailSender.send(message);
+            logger.info("Email sent successfully to {}", recipientEmail);
+        } catch (MessagingException e) {
+            logger.error("Failed to send email to {}: {}", recipientEmail, e.getMessage(), e);
+            throw new MessagingException("Failed to send email: " + e.getMessage(), e);
+        } catch (Exception e) {
+            logger.error("Unexpected error while sending email to {}: {}", recipientEmail, e.getMessage(), e);
+            throw new MessagingException("Unexpected error while sending email: " + e.getMessage(), e);
+        }
     }
 }
